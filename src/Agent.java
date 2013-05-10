@@ -33,6 +33,8 @@ public class Agent {
         
         System.out.println("\n==> Here is the already explored map:");
         map.updateMap(view, state);
+        //state.printState();
+        map.printMap();
 
         try {
             while ( ch != -1 ) {
@@ -48,7 +50,7 @@ public class Agent {
                 		state.moveForward();
                 		
                 		System.out.println("--> Here is the UPDATED map:");
-                		map.updateMap(view, state);
+                		//map.updateMap(view, state);
                 		return ((char) ch);
                 
                 	// LEFT
@@ -58,7 +60,7 @@ public class Agent {
                 		state.turnLeft();
                 		
                 		System.out.println("--> Here is the UPDATED map:");
-                		map.updateMap(view, state);
+                		//map.updateMap(view, state);
                 		return ((char) ch);
                 
                 	// RIGHT
@@ -68,7 +70,7 @@ public class Agent {
                 		state.turnRight();
                 		
                 		System.out.println("--> Here is the UPDATED map:");
-                		map.updateMap(view, state);
+                		//map.updateMap(view, state);
                 		return ((char) ch);
                 		
                 	// CHOP
