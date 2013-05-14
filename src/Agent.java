@@ -40,7 +40,7 @@ public class Agent {
                 	
                 	case 'F': 
                 	case 'f':
-                		state.moveForward();
+                			
                 		map.updateMap(view, state);
                 		return ((char) ch);
                 

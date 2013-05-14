@@ -41,6 +41,9 @@ public class Map {
     	System.out.println("==> Updating Map:");
     	System.out.println("- posX = "+state.posX + "\n- posY = "+state.posY + "\n- direction = "+state.direction);
     
+    	// THIS IS A TEST TO SEE IF I CAN GITHUB LOL
+    
+    
     /*
     	XXXXXXXXXXX	
     	XXXXXXXXXXX
