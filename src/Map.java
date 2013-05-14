@@ -41,8 +41,27 @@ public class Map {
     	System.out.println("==> Updating Map:");
     	System.out.println("- posX = "+state.posX + "\n- posY = "+state.posY + "\n- direction = "+state.direction);
     
-    	// THIS IS A TEST TO SEE IF I CAN GITHUB LOL
+    	// TODO Might not have ifs for all directions (just can't be bothered thinking of
+    	// indices' hax right now).
+    	if (state.direction == Enums.Direction.NORTH) {
+    	
+    		int x = state.posX - view.length/2;
+    		for (int i=0; i < view.length; i++) {
+    			
+    			int y = state.posY - view[0].length/2;
+    			for (int j=0; j < view[0].length; j++) {
+    			
+    				map[x][y] = Enums.charToEnum(view[i][j]);
+    			
+    				y++;
+    			}
+    			
+    			x++;
+    		}
+    	}
     
+    	// Print the result for testing
+    	printMap();
     
     /*
     	XXXXXXXXXXX	

@@ -63,4 +63,43 @@ public class Enums {
             }
         }
     }
+    
+    public static Symbol charToEnum (char c) {
+    
+    	switch (c) {	
+    		case '@':
+    			return Symbol.AGENT;
+    		
+    		case 'a':
+    			return Symbol.AXE;
+   		
+    		case 'd':
+    			return Symbol.DYNAMITE;
+    		
+    		case '-':
+    			return Symbol.DOOR;
+    		
+    		case ' ':
+    			return Symbol.EMPTY;
+    		
+    		case 'k':
+    			return Symbol.KEY;
+    		
+    		case 'T':
+    			return Symbol.TREE;
+    		
+    		case 'X':
+    			return Symbol.UNKNOWN;
+    		
+    		case '*':
+    			return Symbol.WALL;
+    		
+    		case '~':
+    			return Symbol.WATER;
+    	}
+    	
+    	// TODO Make a separate Symbol enum for 'error'
+    	return Symbol.UNKNOWN;
+    }
+    
 }
