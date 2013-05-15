@@ -30,6 +30,9 @@ public class Agent {
         int ch=0;
 
         System.out.print("Enter Action(s): ");
+        
+        System.out.println("\n==> Here is the already explored map:");
+        map.updateMap(view, state);
 
         try {
             while ( ch != -1 ) {
@@ -38,20 +41,72 @@ public class Agent {
 
                 switch( ch ) { 
                 	
+                	// FORWARD
                 	case 'F': 
                 	case 'f':
                 			
+                		state.moveForward();
+                		
+                		System.out.println("--> Here is the UPDATED map:");
                 		map.updateMap(view, state);
                 		return ((char) ch);
                 
+                	// LEFT
+                	case 'L':
+                	case 'l':
+                		
+                		state.turnLeft();
+                		
+                		System.out.println("--> Here is the UPDATED map:");
+                		map.updateMap(view, state);
+                		return ((char) ch);
                 
-                    case 'L': case 'R': case 'C': case 'O': case 'B':
-                    case 'l': case 'r': case 'c': case 'o': case 'b':
-
-                       return((char) ch );
-                       
+                	// RIGHT
+                	case 'R':
+                	case 'r':
+                		
+                		state.turnRight();
+                		
+                		System.out.println("--> Here is the UPDATED map:");
+                		map.updateMap(view, state);
+                		return ((char) ch);
+                		
+                	// CHOP
+                	case 'C':
+                	case 'c':
+                		
+                		if (state.axe) {
+                		
+                		} else {
+                			System.out.println("Sorry, you don't have an AXE");
+                		}
+                		return ((char) ch);
+                
+                	// OPEN
+                	case 'O':
+                	case 'o':
+                		
+                		if (state.key) {
+                		
+                		} else {
+                			System.out.println("Sorry, you don't have a KEY");
+                		}
+                		return ((char) ch);
+                
+                	// BOMB
+                    case 'B':
+                	case 'b':
+                		
+                		if (state.bombs > 0) {
+                		
+                		} else {
+                			System.out.println("Sorry, you don't have any BOMBS");
+                		}
+                		return ((char) ch);
+                      
+                    // PRINT 
                     case 'P':
-                    	map.printMap();
+                    	map.printMap();	
                 }
             }
         }
@@ -124,7 +179,7 @@ public class Agent {
                   }
                }
             }
-            agent.print_view( view ); 						// COMMENT THIS OUT BEFORE SUBMISSION
+            agent.print_view(view); 						// COMMENT THIS OUT BEFORE SUBMISSION
             action = agent.get_action(view);
             out.write( action );
          }
