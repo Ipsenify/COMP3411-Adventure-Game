@@ -12,9 +12,24 @@ public class Enums {
     }
 
     public enum Symbol {
-    	AGENT {
+    	AGENT_NORTH {
     		public String toString () {
-    			return "@";
+    			return "^";
+    		}
+    	},
+    	AGENT_SOUTH {
+    		public String toString () {
+    			return "v";
+    		}
+    	},
+    	AGENT_EAST {
+    		public String toString () {
+    			return ">";
+    		}
+    	},
+    	AGENT_WEST {
+    		public String toString () {
+    			return "<";
     		}
     	},
         AXE {
@@ -67,9 +82,6 @@ public class Enums {
     public static Symbol charToEnum (char c) {
     
     	switch (c) {	
-    		case '@':
-    			return Symbol.AGENT;
-    		
     		case 'a':
     			return Symbol.AXE;
    		
@@ -100,6 +112,26 @@ public class Enums {
     	
     	// TODO Make a separate Symbol enum for 'error'
     	return Symbol.UNKNOWN;
+    }
+    
+    public static Symbol agentDirection (Direction d) {
+    	
+    	switch (d) {
+    		case NORTH:
+    			return Symbol.AGENT_NORTH;
+    			
+    		case SOUTH:
+    			return Symbol.AGENT_SOUTH;
+    			
+    		case EAST:
+    			return Symbol.AGENT_EAST;
+    			
+    		case WEST:
+    			return Symbol.AGENT_WEST;
+    	}
+    	
+    	// By default, return NORTH/UP
+    	return Symbol.AGENT_NORTH;
     }
     
 }

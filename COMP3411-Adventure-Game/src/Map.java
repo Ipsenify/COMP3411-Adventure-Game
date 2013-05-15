@@ -38,8 +38,7 @@ public class Map {
     // We assume the given view is a 5x5 square with the agent in the middle
     public void updateMap(char view[][], State state) {
     
-    	System.out.println("==> Updating Map:");
-    	System.out.println("- posX = "+state.posX + "\n- posY = "+state.posY + "\n- direction = "+state.direction);
+    	state.printState();
     
     	// TODO Might not have ifs for all directions (just can't be bothered thinking of
     	// indices' hax right now).
@@ -51,8 +50,12 @@ public class Map {
     			int y = state.posY - view[0].length/2;
     			for (int j=0; j < view[0].length; j++) {
     			
-    				map[x][y] = Enums.charToEnum(view[i][j]);
-    			
+    				if (x == state.posX && y == state.posY) {
+    					map[x][y] = Enums.agentDirection(state.direction);
+    				} else {
+    					map[x][y] = Enums.charToEnum(view[i][j]);
+    				}
+    				
     				y++;
     			}
     			
