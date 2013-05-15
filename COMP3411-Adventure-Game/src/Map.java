@@ -38,22 +38,70 @@ public class Map {
     // We assume the given view is a 5x5 square with the agent in the middle
     public void updateMap(char view[][], State state) {
     
-    	state.printState();
-    
-    	// TODO Might not have ifs for all directions (just can't be bothered thinking of
-    	// indices' hax right now).
+    	state.printState();	
+   
+    	// NORTH: Top left --> Bottom Right
     	if (state.direction == Enums.Direction.NORTH) {
     	
+    		int mapRow = state.posX - view.length/2;
+    		for (int viewRow=0; viewRow < view.length; viewRow++) {
+    			
+    			int mapCol = state.posY - view[0].length/2;
+    			for (int viewCol=0; viewCol < view[0].length; viewCol++) {
+    			
+    				if (mapRow == state.posX && mapCol == state.posY) {
+    					map[mapCol][mapRow] = Enums.agentDirection(state.direction);
+    				} else {
+    					map[mapCol][mapRow] = Enums.charToEnum(view[viewCol][viewRow]);
+    				}
+    				
+    				mapCol++;
+    			}
+    			
+    			mapRow++;
+    		}
+    	}
+    	
+    	// EAST: Bottom left --> Top Right
+    	if (state.direction == Enums.Direction.EAST) {
+    	
+    		int mapRow = state.posX - view.length/2;
+    		for (int viewRow=0; viewRow < view.length; viewRow++) {
+    			
+    			int mapCol = state.posY - view[0].length/2;
+    			for (int viewCol=view[0].length-1; viewCol >= 0; viewCol--) {
+    			
+    				if (mapRow == state.posX && mapCol == state.posY) {
+    					map[mapCol][mapRow] = Enums.agentDirection(state.direction);
+    				} else {
+    					map[mapCol][mapRow] = Enums.charToEnum(view[viewCol][viewRow]);
+    				}
+    				
+    				mapCol++;
+    			}
+    			
+    			mapRow++;
+    		}
+    	}
+    	
+    	
+    	
+    	
+    	
+    	
+    	/*
+    	else if (state.direction == Enums.Direction.SOUTH) {
+        	
     		int x = state.posX - view.length/2;
-    		for (int i=0; i < view.length; i++) {
+    		for (int i=view.length-1; i >= 0; i--) {
     			
     			int y = state.posY - view[0].length/2;
-    			for (int j=0; j < view[0].length; j++) {
+    			for (int j=view[0].length-1; j >= 0; j--) {
     			
     				if (x == state.posX && y == state.posY) {
-    					map[x][y] = Enums.agentDirection(state.direction);
+    					map[y][x] = Enums.agentDirection(state.direction);
     				} else {
-    					map[x][y] = Enums.charToEnum(view[i][j]);
+    					map[y][x] = Enums.charToEnum(view[j][i]);
     				}
     				
     				y++;
@@ -62,37 +110,73 @@ public class Map {
     			x++;
     		}
     	}
-    
+    	
+    	else if (state.direction == Enums.Direction.EAST) {
+        	
+    		int x = state.posX - view.length/2;
+    		for (int i=0; i < view.length; i++) {
+    			
+    			int y = state.posY - view[0].length/2;
+    			for (int j=view[0].length-1; j >= 0; j--) {
+    			
+    				if (x == state.posX && y == state.posY) {
+    					map[y][x] = Enums.agentDirection(state.direction);
+    				} else {
+    					map[y][x] = Enums.charToEnum(view[j][i]);
+    				}
+    				
+    				y++;
+    			}
+    			
+    			x++;
+    		}
+    	}
+    	
+    	else if (state.direction == Enums.Direction.WEST) {
+        	
+    		int x = state.posX - view.length/2;
+    		for (int i=view.length-1; i >= 0; i--) {
+    			
+    			int y = state.posY - view[0].length/2;
+    			for (int j=view[0].length-1; j >= 0; j--) {
+    			
+    				if (x == state.posX && y == state.posY) {
+    					map[y][x] = Enums.agentDirection(state.direction);
+    				} else {
+    					map[y][x] = Enums.charToEnum(view[j][i]);
+    				}
+    				
+    				y++;
+    			}
+    			
+    			x++;
+    		}
+    	}
+    	
+    	else {
+    		System.out.println("Error: Unknown direction of agent when trying to update map");
+    	}
+		*/
     	// Print the result for testing
     	printMap();
-    
-    /*
-    	XXXXXXXXXXX	
-    	XXXXXXXXXXX
-    	XXX+ d  XXX
-    	XXX     XXX
-    	XXX  ^  XXX
-    	XXX     XXX
-    	XXX     XXX
-    	XXXXXXXXXXX
-    	XXXXXXXXXXX
-    	
-    	^ : i=80, 	j=80
-    	+ : i=80-2	j=80-2
-    */	
-    	
-    	
+	
     }
     
     // Print a ascii version of the entire map
     public void printMap() {
     
     	// Set all coordinated of the map to UNKNOWN at the start
-        for (int i=0; i < MAP_WIDTH; i++) {
-            for (int j=0; j < MAP_HEIGHT; j++) {
-                System.out.print(map[i][j]);
+        for (int i=0; i < map.length; i++) {
+            for (int j=0; j < map[0].length; j++) {
+            	
+            	if (i > 75 && i < 85 && j > 75 && j < 85) {
+        			System.out.print(map[i][j] + "  ");	
+            	}
             }
-            System.out.println();
+            
+            if (i > 75 && i < 85) {
+            	System.out.println();
+            }
         }
     
     }

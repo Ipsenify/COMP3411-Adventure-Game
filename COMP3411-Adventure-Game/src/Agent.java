@@ -31,6 +31,7 @@ public class Agent {
 
         System.out.print("Enter Action(s): ");
         
+        // Update the map from the PREVIOUSLY MADE MOVE
         System.out.println("\n==> Here is the already explored map:");
         map.updateMap(view, state);
 
@@ -46,9 +47,6 @@ public class Agent {
                 	case 'f':
                 			
                 		state.moveForward();
-                		
-                		System.out.println("--> Here is the UPDATED map:");
-                		map.updateMap(view, state);
                 		return ((char) ch);
                 
                 	// LEFT
@@ -56,9 +54,6 @@ public class Agent {
                 	case 'l':
                 		
                 		state.turnLeft();
-                		
-                		System.out.println("--> Here is the UPDATED map:");
-                		map.updateMap(view, state);
                 		return ((char) ch);
                 
                 	// RIGHT
@@ -66,9 +61,6 @@ public class Agent {
                 	case 'r':
                 		
                 		state.turnRight();
-                		
-                		System.out.println("--> Here is the UPDATED map:");
-                		map.updateMap(view, state);
                 		return ((char) ch);
                 		
                 	// CHOP
