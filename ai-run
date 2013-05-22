@@ -1,0 +1,5 @@
+#!/bin/bash
+
+gnome-terminal -x ./scriptA.sh
+gnome-terminal -x ./scriptB.sh
+

@@ -22,6 +22,9 @@ public class State {
     public int posX;
     public int posY;
     
+    public int pastCost;
+    public int futureCost;
+    
     // Creator method
     public State() {
             
@@ -31,6 +34,17 @@ public class State {
         direction = Enums.Direction.NORTH;
         posX = Map.MAP_WIDTH/2;
         posY = Map.MAP_HEIGHT/2;        
+    }
+    
+    public State(boolean axe, int bombs, Enums.Direction direction, boolean key, int pastCost, int posX, int posY) {
+    	this.axe = axe;
+    	this.bombs = bombs;
+    	this.direction = direction;
+    	this.key = key;
+    	this.pastCost = pastCost;
+    	this.posX = posX;
+    	this.posY = posY;
+    	
     }
     
     // Print method used for debugging
@@ -102,6 +116,10 @@ public class State {
  				direction = Enums.Direction.NORTH;
  				break;
  		}
+ 	}
+ 	
+ 	public void getChildren() {
+ 		
  	}
  
 }
