@@ -37,7 +37,7 @@ public class Enums {
                 return "a";
             }
         },
-        DYNAMITE {
+        BOMB {
             public String toString () {
                 return "d";
             }
@@ -50,6 +50,11 @@ public class Enums {
         EMPTY {
             public String toString () {
                 return " ";
+            }
+        },
+        GOLD {
+            public String toString () {
+                return "g";
             }
         },
         KEY {
@@ -86,7 +91,7 @@ public class Enums {
     			return Symbol.AXE;
    		
     		case 'd':
-    			return Symbol.DYNAMITE;
+    			return Symbol.BOMB;
     		
     		case '-':
     			return Symbol.DOOR;
@@ -94,6 +99,9 @@ public class Enums {
     		case ' ':
     			return Symbol.EMPTY;
     		
+    		case 'g':
+    			return Symbol.GOLD;
+    			
     		case 'k':
     			return Symbol.KEY;
     		

@@ -7,6 +7,7 @@
 
 import java.util.*;
 import java.io.*;
+import java.lang.management.MemoryType;
 import java.net.*;
 
 public class Map {
@@ -32,6 +33,15 @@ public class Map {
         
     }
     
+    public Map(Map m) {
+    	 for (int i=0; i < MAP_WIDTH; i++) {
+             for (int j=0; j < MAP_HEIGHT; j++) {
+             
+             	this.map[i][j] = m.map[i][j];
+             }
+         }
+    }
+    
     // Update the explored map given a new view that has been explored
     // A state is passed in to find the direction of the agent
     // We assume the given view is a 5x5 square with the agent in the middle
@@ -43,14 +53,14 @@ public class Map {
     	// indices' hax right now).
     	if (state.direction == Enums.Direction.NORTH) {
     	
-    		int x_m = state.posX - view.length/2;
+    		int x_m = state.c.x - view.length/2;
     		for (int x_v=0; x_v < view.length; x_v++) {
     			
-    			int y_m = state.posY - view[0].length/2;
+    			int y_m = state.c.y - view[0].length/2;
     			
     			for (int y_v=0; y_v < view[0].length; y_v++) {
     				
-    				if (x_m == state.posX && y_m == state.posY) {
+    				if (x_m == state.c.x && y_m == state.c.y) {
     					map[x_m][y_m] = Enums.agentDirection(state.direction);
     				} else {	
     					map[x_m][y_m] = Enums.charToEnum(view[y_v][x_v]);
@@ -63,13 +73,13 @@ public class Map {
     		}
     	} else if (state.direction == Enums.Direction.SOUTH) {
     	
-    		int x_m = state.posX - view.length/2;
+    		int x_m = state.c.x - view.length/2;
     		for (int x_v=view.length-1; x_v >= 0; x_v--) {
     			
-    			int y_m = state.posY - view[0].length/2;
+    			int y_m = state.c.y - view[0].length/2;
     			for (int y_v=view[0].length-1; y_v >= 0; y_v--) {
     			
-    				if (x_m == state.posX && y_m == state.posY) {
+    				if (x_m == state.c.x && y_m == state.c.y) {
     					map[x_m][y_m] = Enums.agentDirection(state.direction);
     				} else {	
     					map[x_m][y_m] = Enums.charToEnum(view[y_v][x_v]);
@@ -82,13 +92,13 @@ public class Map {
     		}
     	} else if (state.direction == Enums.Direction.EAST) {
     	
-    		int x_m = state.posX - view.length/2;
+    		int x_m = state.c.x - view.length/2;
     		
 			for (int y_v=view[0].length-1; y_v >= 0; y_v--) {
     			
-    			int y_m = state.posY - view[0].length/2;
+    			int y_m = state.c.y - view[0].length/2;
 				for (int x_v=0; x_v < view.length; x_v++) {
-    				if (x_m == state.posX && y_m == state.posY) {
+    				if (x_m == state.c.x && y_m == state.c.y) {
     					map[x_m][y_m] = Enums.agentDirection(state.direction);
     				} else {	
     					map[x_m][y_m] = Enums.charToEnum(view[y_v][x_v]);
@@ -101,13 +111,13 @@ public class Map {
     		}
     	} else if (state.direction == Enums.Direction.WEST) {
     	
-    		int x_m = state.posX - view.length/2;
+    		int x_m = state.c.x - view.length/2;
     		for (int y_v=0; y_v < view[0].length; y_v++) {
     		
     			
-    			int y_m = state.posY - view[0].length/2;
+    			int y_m = state.c.y - view[0].length/2;
     			for (int x_v=view.length-1; x_v >= 0; x_v--) {
-    				if (x_m == state.posX && y_m == state.posY) {
+    				if (x_m == state.c.x && y_m == state.c.y) {
     					map[x_m][y_m] = Enums.agentDirection(state.direction);
     				} else {	
     					map[x_m][y_m] = Enums.charToEnum(view[y_v][x_v]);
@@ -119,26 +129,14 @@ public class Map {
     			x_m++;
     		}
     	}
+    }
     
-    	// Print the result for testing
-    	//printMap();
+    public void clearLocation(Coordinate c) {
+    	this.map[c.x][c.y] = Enums.Symbol.EMPTY;
+    }
     
-    /*
-    	XXXXXXXXXXX	
-    	XXXXXXXXXXX
-    	XXX+ d  XXX
-    	XXX     XXX
-    	XXX  ^  XXX
-    	XXX     XXX
-    	XXX     XXX
-    	XXXXXXXXXXX
-    	XXXXXXXXXXX
-    	
-    	^ : i=80, 	j=80
-    	+ : i=80-2	j=80-2
-    */	
-    	
-    	
+    public Enums.Symbol getInFront(Coordinate c) {
+    	return this.map[c.x][c.y];
     }
     
     // Print a ascii version of the entire map

@@ -12,13 +12,13 @@ import java.net.*;
 public class Agent {
 
 	// Class instance variables
-	Map map;
+	Map globalMap;
 	State state;
 
 	public Agent() {
 	
 		// Initialize class instances of Map and State variables
-		map = new Map();
+		globalMap = new Map();
 		state = new State();
 	}
 
@@ -32,9 +32,9 @@ public class Agent {
         System.out.print("Enter Action(s): ");
         
         System.out.println("\n==> Here is the already explored map:");
-        map.updateMap(view, state);
+        globalMap.updateMap(view, state);
         //state.printState();
-        map.printMap();
+        globalMap.printMap();
 
         try {
             while ( ch != -1 ) {
@@ -108,7 +108,7 @@ public class Agent {
                       
                     // PRINT 
                     case 'P':
-                    	map.printMap();	
+                    	globalMap.printMap();	
                 }
             }
         }
