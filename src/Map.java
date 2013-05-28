@@ -17,17 +17,18 @@ public class Map {
     public static final int MAP_HEIGHT = 160;
 
     // Class variables
-    private Enums.Symbol[][] map;
+    //private Enums.Symbol[][] map;
+    private Point[][] map;
     
     // Creator method
     public Map() {
-        map = new Enums.Symbol[MAP_WIDTH][MAP_HEIGHT];
+        map = new Point[MAP_WIDTH][MAP_HEIGHT];
 
         // Set all coordinated of the map to UNKNOWN at the start
         for (int i=0; i < MAP_WIDTH; i++) {
             for (int j=0; j < MAP_HEIGHT; j++) {
             
-            	map[i][j] = Enums.Symbol.UNKNOWN;
+            	map[i][j] = new Point(i, j, Enums.Symbol.UNKNOWN);
             }
         }
         
@@ -61,9 +62,9 @@ public class Map {
     			for (int y_v=0; y_v < view[0].length; y_v++) {
     				
     				if (x_m == state.c.x && y_m == state.c.y) {
-    					map[x_m][y_m] = Enums.agentDirection(state.direction);
+    					map[x_m][y_m].symbol = Enums.agentDirection(state.direction);
     				} else {	
-    					map[x_m][y_m] = Enums.charToEnum(view[y_v][x_v]);
+    					map[x_m][y_m].symbol = Enums.charToEnum(view[y_v][x_v]);
     				}
     				
     				y_m++;
@@ -80,9 +81,9 @@ public class Map {
     			for (int y_v=view[0].length-1; y_v >= 0; y_v--) {
     			
     				if (x_m == state.c.x && y_m == state.c.y) {
-    					map[x_m][y_m] = Enums.agentDirection(state.direction);
+    					map[x_m][y_m].symbol = Enums.agentDirection(state.direction);
     				} else {	
-    					map[x_m][y_m] = Enums.charToEnum(view[y_v][x_v]);
+    					map[x_m][y_m].symbol = Enums.charToEnum(view[y_v][x_v]);
     				}
     				
     				y_m++;
@@ -99,9 +100,9 @@ public class Map {
     			int y_m = state.c.y - view[0].length/2;
 				for (int x_v=0; x_v < view.length; x_v++) {
     				if (x_m == state.c.x && y_m == state.c.y) {
-    					map[x_m][y_m] = Enums.agentDirection(state.direction);
+    					map[x_m][y_m].symbol = Enums.agentDirection(state.direction);
     				} else {	
-    					map[x_m][y_m] = Enums.charToEnum(view[y_v][x_v]);
+    					map[x_m][y_m].symbol = Enums.charToEnum(view[y_v][x_v]);
     				}
     				
     				y_m++;
@@ -118,9 +119,9 @@ public class Map {
     			int y_m = state.c.y - view[0].length/2;
     			for (int x_v=view.length-1; x_v >= 0; x_v--) {
     				if (x_m == state.c.x && y_m == state.c.y) {
-    					map[x_m][y_m] = Enums.agentDirection(state.direction);
+    					map[x_m][y_m].symbol = Enums.agentDirection(state.direction);
     				} else {	
-    					map[x_m][y_m] = Enums.charToEnum(view[y_v][x_v]);
+    					map[x_m][y_m].symbol = Enums.charToEnum(view[y_v][x_v]);
     				}
     				
     				y_m++;
@@ -132,11 +133,11 @@ public class Map {
     }
     
     public void clearLocation(Coordinate c) {
-    	this.map[c.x][c.y] = Enums.Symbol.EMPTY;
+    	this.map[c.x][c.y].symbol = Enums.Symbol.EMPTY;
     }
     
-    public Enums.Symbol getInFront(Coordinate c) {
-    	return this.map[c.x][c.y];
+    public Enums.Symbol getSymbolAtCoord(Coordinate c) {
+    	return this.map[c.x][c.y].symbol;
     }
     
     // Print a ascii version of the entire map
@@ -150,6 +151,72 @@ public class Map {
             System.out.println();
         }
     
+    }
+    
+    // Return a coordinate that is surrounded by the most UNKNOWN symbols
+    // Used for exploring stage
+    public Coordinate findMostUnknowns() {
+    	
+    	Coordinate retval = null;
+    	int maxCount = 0;
+    	
+    	// For each UNKNOWN point on the map...
+    	for (int i=0; i < MAP_WIDTH; i++) {
+            for (int j=0; j < MAP_HEIGHT; j++) {
+            
+            	if (map[i][j].symbol == Enums.Symbol.UNKNOWN) {
+            	
+	            	// Count the number of UNKOWNS: 
+	            	int tempCount = 0;
+	            	boolean valid = true;
+            		int k;
+            		
+	            	// ABOVE
+	            	for (k=j; k >= 0 && map[i][k].symbol == Enums.Symbol.UNKNOWN; k--) {
+	            		tempCount++;
+	            	}
+	            	if (k == 0) {
+	            		valid = false;
+	            	}
+	            	
+	            		
+	            	// BELOW
+	            	for (k=j; k < MAP_HEIGHT && map[i][k].symbol == Enums.Symbol.UNKNOWN; k++) {
+	            		tempCount++;
+	            	}
+	            	if (k == MAP_HEIGHT) {
+	            		valid = false;
+	            	}
+	            	
+	            	// LEFT
+	            	for (k=i; k >= 0 && map[k][j].symbol == Enums.Symbol.UNKNOWN; k--) {
+	            		tempCount++;
+	            	}
+	            	if (k == 0) {
+	            		valid = false;
+	            	}
+	            		
+	            	// RIGHT
+	            	for (k=i; k < MAP_WIDTH && map[k][j].symbol == Enums.Symbol.UNKNOWN; k++) {
+	            		tempCount++;
+	            	}
+	            	if (k == MAP_WIDTH) { 
+	            		valid = false;
+	            	}
+	            	
+	            	// Update the new max count
+	            	if (valid == true && tempCount > maxCount) {
+	            		maxCount = tempCount;
+	            		retval = map[i][j].convertToCoord();
+	            	}
+            		
+            	} else {
+            		// DO NOTHING
+            	}
+            }
+        }
+    	
+    	return retval;
     }
     
 }

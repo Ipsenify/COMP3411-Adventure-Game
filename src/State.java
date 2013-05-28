@@ -71,7 +71,7 @@ public class State {
  		
  		Coordinate coordInFront = coordinateInFront();
  		
- 		Enums.Symbol itemInFront = this.map.getInFront(coordInFront);
+ 		Enums.Symbol itemInFront = this.map.getSymbolAtCoord(coordInFront);
  		
  		if (itemInFront == Enums.Symbol.AXE) {
  			this.axe = true;
@@ -166,7 +166,7 @@ public class State {
  		s.turnRight();
  		children.add(s);
  		
- 		Enums.Symbol inFront = this.map.getInFront(coordinateInFront());
+ 		Enums.Symbol inFront = this.map.getSymbolAtCoord(coordinateInFront());
  		
  		// Forward
  		if (canMoveForward(inFront) == true) {
@@ -214,7 +214,7 @@ public class State {
  		return children;
  	}
  	
- 	private Coordinate coordinateInFront() {
+ 	public Coordinate coordinateInFront() {
  		Coordinate retval = new Coordinate(this.c.x, this.c.y);
  		
  		if (this.direction == Enums.Direction.NORTH) {
@@ -230,15 +230,37 @@ public class State {
  		return retval;
  	}
  	
- 	
  	private boolean canMoveForward(Enums.Symbol inFront) {
  		if (inFront == Enums.Symbol.DOOR || 
- 				inFront == Enums.Symbol.TREE || 
- 				inFront == Enums.Symbol.WALL ||
- 				inFront == Enums.Symbol.WATER) {
+ 			inFront == Enums.Symbol.TREE || 
+ 			inFront == Enums.Symbol.WALL ||
+ 			inFront == Enums.Symbol.WATER) {
+ 			
  			return false;
  		} else {
  			return true;
  		}
+ 	}
+ 	
+ 	// added for exploring, do we need the above method?????
+ 	// IGNORE BOMBS FOR NOW
+ 	public boolean canMoveForward() {
+ 		boolean retval = false;
+ 		
+ 		Enums.Symbol inFront = this.map.getSymbolAtCoord(this.coordinateInFront());
+ 		
+ 		if (inFront == Enums.Symbol.EMPTY) {
+ 			retval = true;
+ 		}
+ 		
+ 		if (inFront == Enums.Symbol.DOOR && this.key == true) {
+ 			retval = true;	
+ 		}
+ 		
+ 		if (inFront == Enums.Symbol.TREE && this.axe == true) {
+ 			retval = true;	
+ 		}
+ 		
+ 		return retval;
  	}
 }

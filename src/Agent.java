@@ -10,111 +10,136 @@ import java.io.*;
 import java.net.*;
 
 public class Agent {
+	
+	// Class constants
+	public static final int STAGE_1_EXPLORE = 0;
+	public static final int STAGE_2_PATHFIND = 1;	// change later
 
 	// Class instance variables
 	Map globalMap;
 	State state;
+
+	int stage;
 
 	public Agent() {
 	
 		// Initialize class instances of Map and State variables
 		globalMap = new Map();
 		state = new State();
+		
+		// First stage of AI will be exploring the surrounding environment 
+		stage = STAGE_1_EXPLORE;
 	}
 
 
 	public char get_action(char view[][]) {
 
-        // REPLACE THIS CODE WITH AI TO CHOOSE ACTION
+		// Explorer everywhere we can FIRST!
+		if (stage == STAGE_1_EXPLORE) {
+			
+			boolean followingWall = false;
+			
+			// Move forward if possible
+			if (followingWall == false && state.canMoveForward()) {
+				
+				state.moveForward();
+				
+			} else {
+				followingWall = true;
+			}
+				
+		} else {
 
-        int ch=0;
-
-        System.out.print("Enter Action(s): ");
+	        int ch=0;
+	
+	        System.out.print("Enter Action(s): ");
+	        
+	        System.out.println("\n==> Here is the already explored map:");
+	        globalMap.updateMap(view, state);
+	        //state.printState();
+	        globalMap.printMap();
+	
+	        try {
+	            while ( ch != -1 ) {
+	                // read character from keyboard
+	                ch  = System.in.read();
+	
+	                switch( ch ) { 
+	                	
+	                	// FORWARD
+	                	case 'F': 
+	                	case 'f':
+	                			
+	                		state.moveForward();
+	                		
+	                		System.out.println("--> Here is the UPDATED map:");
+	                		//map.updateMap(view, state);
+	                		return ((char) ch);
+	                
+	                	// LEFT
+	                	case 'L':
+	                	case 'l':
+	                		
+	                		state.turnLeft();
+	                		
+	                		System.out.println("--> Here is the UPDATED map:");
+	                		//map.updateMap(view, state);
+	                		return ((char) ch);
+	                
+	                	// RIGHT
+	                	case 'R':
+	                	case 'r':
+	                		
+	                		state.turnRight();
+	                		
+	                		System.out.println("--> Here is the UPDATED map:");
+	                		//map.updateMap(view, state);
+	                		return ((char) ch);
+	                		
+	                	// CHOP
+	                	case 'C':
+	                	case 'c':
+	                		
+	                		if (state.axe) {
+	                		
+	                		} else {
+	                			System.out.println("Sorry, you don't have an AXE");
+	                		}
+	                		return ((char) ch);
+	                
+	                	// OPEN
+	                	case 'O':
+	                	case 'o':
+	                		
+	                		if (state.key) {
+	                		
+	                		} else {
+	                			System.out.println("Sorry, you don't have a KEY");
+	                		}
+	                		return ((char) ch);
+	                
+	                	// BOMB
+	                    case 'B':
+	                	case 'b':
+	                		
+	                		if (state.bombs > 0) {
+	                		
+	                		} else {
+	                			System.out.println("Sorry, you don't have any BOMBS");
+	                		}
+	                		return ((char) ch);
+	                      
+	                    // PRINT 
+	                    case 'P':
+	                    	globalMap.printMap();	
+	                }
+	            }
+	        }
+	        catch (IOException e) {
+	            System.out.println ("IO error:" + e );
+	        }
         
-        System.out.println("\n==> Here is the already explored map:");
-        globalMap.updateMap(view, state);
-        //state.printState();
-        globalMap.printMap();
-
-        try {
-            while ( ch != -1 ) {
-                // read character from keyboard
-                ch  = System.in.read();
-
-                switch( ch ) { 
-                	
-                	// FORWARD
-                	case 'F': 
-                	case 'f':
-                			
-                		state.moveForward();
-                		
-                		System.out.println("--> Here is the UPDATED map:");
-                		//map.updateMap(view, state);
-                		return ((char) ch);
-                
-                	// LEFT
-                	case 'L':
-                	case 'l':
-                		
-                		state.turnLeft();
-                		
-                		System.out.println("--> Here is the UPDATED map:");
-                		//map.updateMap(view, state);
-                		return ((char) ch);
-                
-                	// RIGHT
-                	case 'R':
-                	case 'r':
-                		
-                		state.turnRight();
-                		
-                		System.out.println("--> Here is the UPDATED map:");
-                		//map.updateMap(view, state);
-                		return ((char) ch);
-                		
-                	// CHOP
-                	case 'C':
-                	case 'c':
-                		
-                		if (state.axe) {
-                		
-                		} else {
-                			System.out.println("Sorry, you don't have an AXE");
-                		}
-                		return ((char) ch);
-                
-                	// OPEN
-                	case 'O':
-                	case 'o':
-                		
-                		if (state.key) {
-                		
-                		} else {
-                			System.out.println("Sorry, you don't have a KEY");
-                		}
-                		return ((char) ch);
-                
-                	// BOMB
-                    case 'B':
-                	case 'b':
-                		
-                		if (state.bombs > 0) {
-                		
-                		} else {
-                			System.out.println("Sorry, you don't have any BOMBS");
-                		}
-                		return ((char) ch);
-                      
-                    // PRINT 
-                    case 'P':
-                    	globalMap.printMap();	
-                }
-            }
-        }
-        catch (IOException e) {
-            System.out.println ("IO error:" + e );
-        }
+		}
 
         return 0;
    }
