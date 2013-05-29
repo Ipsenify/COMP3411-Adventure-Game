@@ -35,7 +35,7 @@ public class Explore {
 			// Move forward if possible
 			if (followingWall == false) {
 				
-				if (s.canMoveForward()) {
+				if (this.canMoveForward()) {
 					move = moveForward();
 				} else {
 					
@@ -54,11 +54,11 @@ public class Explore {
 					move = turnLeft();
 				} 
 				// Move forward if possible
-				else if (s.canMoveForward() == true) {
+				else if (this.canMoveForward() == true) {
 					move = moveForward();
 				}
 				// Otherwise turn right
-				else if (s.canMoveForward() == false) {
+				else if (this.canMoveForward() == false) {
 					move = turnRight();
 				}
 
@@ -120,4 +120,32 @@ public class Explore {
 		s.moveForward();
 		return 'f';
 	}
+	
+	private boolean canMoveForward() {
+ 		boolean retval = false;
+ 		
+ 		Enums.Symbol inFront = this.m.getSymbolAtCoord(s.coordinateInFront());
+ 		
+ 		System.out.println("\n\n\n\n\n\n\n\n\nInfront == " + inFront);
+ 		if (inFront == Enums.Symbol.EMPTY) {
+ 			retval = true;
+ 		}
+ 		
+ 		if (inFront == Enums.Symbol.DOOR && s.key == true) {
+ 			retval = true;	
+ 		}
+ 		
+ 		if (inFront == Enums.Symbol.TREE && s.axe == true) {
+ 			retval = true;	
+ 		}
+ 		
+ 		if (inFront == Enums.Symbol.AXE || 
+ 				inFront == Enums.Symbol.KEY || 
+ 				inFront == Enums.Symbol.BOMB ||
+ 				inFront == Enums.Symbol.GOLD) {
+ 			retval = true;
+ 		}
+ 		
+ 		return retval;
+ 	}
 }

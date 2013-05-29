@@ -240,33 +240,5 @@ public class State {
  			return true;
  		}
  	}
- 	
- 	// added for exploring, do we need the above method?????
- 	// IGNORE BOMBS FOR NOW
- 	public boolean canMoveForward() {
- 		boolean retval = false;
- 		
- 		Enums.Symbol inFront = this.map.getSymbolAtCoord(this.coordinateInFront());
- 		
- 		if (inFront == Enums.Symbol.EMPTY) {
- 			retval = true;
- 		}
- 		
- 		if (inFront == Enums.Symbol.DOOR && this.key == true) {
- 			retval = true;	
- 		}
- 		
- 		if (inFront == Enums.Symbol.TREE && this.axe == true) {
- 			retval = true;	
- 		}
- 		
- 		if (inFront == Enums.Symbol.AXE || 
- 				inFront == Enums.Symbol.KEY || 
- 				inFront == Enums.Symbol.BOMB ||
- 				inFront == Enums.Symbol.GOLD) {
- 			retval = true;
- 		}
- 		
- 		return retval;
- 	}
+
 }
