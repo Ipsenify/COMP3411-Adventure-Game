@@ -18,7 +18,8 @@ public class Agent {
 	// Class instance variables
 	Map globalMap;
 	State state;
-
+	Explore explorer;
+	
 	int stage;
 
 	public Agent() {
@@ -26,6 +27,7 @@ public class Agent {
 		// Initialize class instances of Map and State variables
 		globalMap = new Map();
 		state = new State();
+		explorer = new Explore(globalMap, state);
 		
 		// First stage of AI will be exploring the surrounding environment 
 		stage = STAGE_1_EXPLORE;
@@ -33,20 +35,16 @@ public class Agent {
 
 
 	public char get_action(char view[][]) {
-
+		
+		System.out.println("\n==> Here is the already explored map:");
+        globalMap.updateMap(view, state);
+        state.printState();
+        globalMap.printMap();
+		
 		// Explorer everywhere we can FIRST!
-		if (stage == STAGE_1_EXPLORE) {
+		if (stage == STAGE_1_EXPLORE && explorer.stillExploring()) {
 			
-			boolean followingWall = false;
-			
-			// Move forward if possible
-			if (followingWall == false && state.canMoveForward()) {
-				
-				state.moveForward();
-				
-			} else {
-				followingWall = true;
-			}
+			return explorer.run();
 				
 		} else {
 
@@ -54,10 +52,7 @@ public class Agent {
 	
 	        System.out.print("Enter Action(s): ");
 	        
-	        System.out.println("\n==> Here is the already explored map:");
-	        globalMap.updateMap(view, state);
-	        //state.printState();
-	        globalMap.printMap();
+	        
 	
 	        try {
 	            while ( ch != -1 ) {

@@ -261,6 +261,13 @@ public class State {
  			retval = true;	
  		}
  		
+ 		if (inFront == Enums.Symbol.AXE || 
+ 				inFront == Enums.Symbol.KEY || 
+ 				inFront == Enums.Symbol.BOMB ||
+ 				inFront == Enums.Symbol.GOLD) {
+ 			retval = true;
+ 		}
+ 		
  		return retval;
  	}
 }
