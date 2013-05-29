@@ -47,11 +47,8 @@ public class Map {
     // A state is passed in to find the direction of the agent
     // We assume the given view is a 5x5 square with the agent in the middle
     public void updateMap(char view[][], State state) {
-    
-    	//state.printState();
-    
-    	// TODO Might not have ifs for all directions (just can't be bothered thinking of
-    	// indices' hax right now).
+
+		// NORTH
     	if (state.direction == Enums.Direction.NORTH) {
     	
     		int x_m = state.c.x - view.length/2;
@@ -72,7 +69,10 @@ public class Map {
     			
     			x_m++;
     		}
-    	} else if (state.direction == Enums.Direction.SOUTH) {
+    	} 
+    	
+    	// SOUTH
+    	else if (state.direction == Enums.Direction.SOUTH) {
     	
     		int x_m = state.c.x - view.length/2;
     		for (int x_v=view.length-1; x_v >= 0; x_v--) {
@@ -91,7 +91,10 @@ public class Map {
     			
     			x_m++;
     		}
-    	} else if (state.direction == Enums.Direction.EAST) {
+    	} 
+    	
+    	// EAST
+    	else if (state.direction == Enums.Direction.EAST) {
     	
     		int x_m = state.c.x - view.length/2;
     		
@@ -110,7 +113,10 @@ public class Map {
     			
     			x_m++;
     		}
-    	} else if (state.direction == Enums.Direction.WEST) {
+    	} 
+    	
+    	// WEST
+    	else if (state.direction == Enums.Direction.WEST) {
     	
     		int x_m = state.c.x - view.length/2;
     		for (int y_v=0; y_v < view[0].length; y_v++) {
