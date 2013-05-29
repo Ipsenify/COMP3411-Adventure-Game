@@ -18,8 +18,8 @@ public class Explore {
 	
 	
 	
-	public Explore(Map m, State s) {
-		this.m = m;
+	public Explore(State s) {
+		this.m = s.map;
 		this.s = s;
 		this.phase = PLEDGE_PHASE;
 		this.followingWall = false;
@@ -28,14 +28,14 @@ public class Explore {
 	}
 	
 	public char run() {
-		char move = '-';
+		char move = '?';	// Should never happen
 		
 		if (phase == PLEDGE_PHASE) {
 			
 			// Move forward if possible
 			if (followingWall == false) {
 				
-				if (this.canMoveForward()) {
+				if (s.canMoveForward()) {
 					move = moveForward();
 				} else {
 					
@@ -50,18 +50,33 @@ public class Explore {
 				// Keeping our left hand on the wall...
 				
 				// Move left if possible
-				if (this.canMoveLeft() == true) {
+				
+				if (this.canMoveLeft() == true && s.movesMade.get(s.movesMade.size()-1) != 'l') {
+					System.out.println("Turning Left!!!");
 					move = turnLeft();
 				} 
 				// Move forward if possible
-				else if (this.canMoveForward() == true) {
+				else if (s.canMoveForward() == true) {
 					move = moveForward();
 				}
 				// Otherwise turn right
-				else if (this.canMoveForward() == false) {
+				else {
 					move = turnRight();
 				}
-
+				
+				/*if (this.canMoveLeft() == false && s.canMoveForward() == false) {
+					move = turnRight();
+				} else if (this.canMoveLeft() == false && s.canMoveForward() == true) {
+					move = moveForward();
+				} else if (this.canMoveLeft() == true && s.canMoveForward() == true) {
+					System.out.println(s.lastMove());
+					if (s.lastMove() == 'l') {
+						move = moveForward();
+					} else {
+						move = turnLeft();
+					}
+				}*/
+					
 				// Stop following the wall when pledge condition is met
 				if (s.direction == initialDirection && turnCount == 0) {
 					followingWall = false;
@@ -74,30 +89,12 @@ public class Explore {
 	}
 	
 	private boolean canMoveLeft() {
-		boolean retval = false;
 		
-		// Turn left
-		s.turnLeft();
+		// Look to the left
+		Enums.Symbol onLeft = s.map.getSymbolAtCoord(s.coordinateOnLeft());
 		
-		// Check if wall is in front
-		Enums.Symbol inFront = this.m.getSymbolAtCoord(s.coordinateInFront());
-		if (inFront == Enums.Symbol.WALL || 
-				inFront == Enums.Symbol.WATER) {
-			retval = true;
-		}
-		
-		if (inFront == Enums.Symbol.DOOR && s.key == true) {
-			retval = true;
-		}
-		
-		if (inFront == Enums.Symbol.TREE && s.axe == true) {
-			retval = true;
-		}
-		
-		// Turn back afterwards
-		s.turnRight();
-		
-		return retval;
+		// See if we can go there
+		return s.validMove(onLeft);
 	}
 	
 	public boolean stillExploring() {
@@ -120,32 +117,4 @@ public class Explore {
 		s.moveForward();
 		return 'f';
 	}
-	
-	private boolean canMoveForward() {
- 		boolean retval = false;
- 		
- 		Enums.Symbol inFront = this.m.getSymbolAtCoord(s.coordinateInFront());
- 		
- 		System.out.println("\n\n\n\n\n\n\n\n\nInfront == " + inFront);
- 		if (inFront == Enums.Symbol.EMPTY) {
- 			retval = true;
- 		}
- 		
- 		if (inFront == Enums.Symbol.DOOR && s.key == true) {
- 			retval = true;	
- 		}
- 		
- 		if (inFront == Enums.Symbol.TREE && s.axe == true) {
- 			retval = true;	
- 		}
- 		
- 		if (inFront == Enums.Symbol.AXE || 
- 				inFront == Enums.Symbol.KEY || 
- 				inFront == Enums.Symbol.BOMB ||
- 				inFront == Enums.Symbol.GOLD) {
- 			retval = true;
- 		}
- 		
- 		return retval;
- 	}
 }

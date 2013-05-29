@@ -9,8 +9,6 @@ import java.util.*;
 import java.io.*;
 import java.net.*;
 
-import sun.font.LayoutPathImpl.EndType;
-
 public class State {
 
     // Class variables
@@ -27,13 +25,16 @@ public class State {
     public int pastCost;
     public int futureCost;
     
+    public int moveCount;
+    
     public ArrayList<Character> movesMade;
     
     public Map map;
     
     // Creator method
     public State() {
-            
+
+    	this.moveCount = 0;
         this.bombs = 0;
         this.key = false;
         this.axe = false;
@@ -62,11 +63,17 @@ public class State {
     // Print method used for debugging
     public void printState() {
     	System.out.println("| bombs = "+ bombs +" | key = "+ key +" | axe = "+ axe +" | direction = "+ direction +" | posX = "+ c.x +" | posY = "+ c.y +" |");
+    	System.out.print("\n Moves Made:");
+    	for(char c : this.movesMade) {
+    		System.out.print(" " + c);
+    	}
+    	System.out.println("\nMoveCount: " + moveCount);
     }
  
  	// Update the position of the agent relative to their direction
  	public void moveForward() {
  		movesMade.add('f');
+ 		moveCount++;
  		
  		Coordinate coordInFront = coordinateInFront();
  		
@@ -92,6 +99,7 @@ public class State {
  	public void turnLeft() {
  		
  		movesMade.add('l');
+ 		moveCount++;
  		
  		switch (direction) {
  			case NORTH:
@@ -116,6 +124,7 @@ public class State {
  	public void turnRight() {
  		
  		movesMade.add('r');
+ 		moveCount++;
  		
  		switch (direction) {
  			case NORTH:
@@ -138,15 +147,18 @@ public class State {
  	
  	// Assume usage is valid
  	public void useKey() {
+ 		moveCount++;
  		this.map.clearLocation(coordinateInFront());
  		this.movesMade.add('o');
  	}
  	public void useBomb() {
+ 		moveCount++;
  		this.map.clearLocation(coordinateInFront());
  		this.bombs--;
  		this.movesMade.add('b');
  	}
  	public void useAxe() {
+ 		moveCount++;
  		this.map.clearLocation(coordinateInFront());
  		this.movesMade.add('c');
  	}
@@ -168,7 +180,7 @@ public class State {
  		Enums.Symbol inFront = this.map.getSymbolAtCoord(coordinateInFront());
  		
  		// Forward
- 		if (canMoveForward(inFront) == true) {
+ 		if (canMoveForward() == true) {
  			s = new State(this);
  			s.moveForward();
  			children.add(s);
@@ -229,16 +241,55 @@ public class State {
  		return retval;
  	}
  	
- 	private boolean canMoveForward(Enums.Symbol inFront) {
- 		if (inFront == Enums.Symbol.DOOR || 
- 			inFront == Enums.Symbol.TREE || 
- 			inFront == Enums.Symbol.WALL ||
- 			inFront == Enums.Symbol.WATER) {
- 			
- 			return false;
- 		} else {
- 			return true;
- 		}
+ 	public Coordinate coordinateOnLeft() {
+ 		Coordinate retval = new Coordinate(this.c.x, this.c.y);
+ 		
+ 		if (this.direction == Enums.Direction.NORTH) {
+    		retval.x--;
+    	} else if (this.direction == Enums.Direction.SOUTH) {
+    		retval.x++;
+    	} else if (this.direction == Enums.Direction.EAST) {
+    		retval.y--;
+    	} else if (this.direction == Enums.Direction.WEST) {
+    		retval.y++;
+    	}
+ 		
+ 		return retval;
+ 	} 
+ 	
+ 	public boolean canMoveForward() {
+ 		Enums.Symbol inFront = this.map.getSymbolAtCoord(this.coordinateInFront());
+ 		return validMove(inFront);
  	}
-
+ 	
+ 	// Assuming no BOMBS
+ 	public boolean validMove(Enums.Symbol inFront) {
+ 		boolean retval = false;
+ 		
+ 		if (inFront == Enums.Symbol.EMPTY) {
+ 			retval = true;
+ 		}
+ 		
+ 		if (inFront == Enums.Symbol.DOOR && this.key == true) {
+ 			retval = true;	
+ 		}
+ 		
+ 		if (inFront == Enums.Symbol.TREE && this.axe == true) {
+ 			retval = true;	
+ 		}
+ 		
+ 		if (inFront == Enums.Symbol.AXE || 
+ 				inFront == Enums.Symbol.KEY || 
+ 				inFront == Enums.Symbol.BOMB ||
+ 				inFront == Enums.Symbol.GOLD) {
+ 			retval = true;
+ 		}
+ 		
+ 		return retval;
+ 	}
+ 	
+ 	public char lastMove() {
+ 		return this.movesMade.get(this.movesMade.size()-1);
+ 	}
+ 
 }

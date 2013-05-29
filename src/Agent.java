@@ -16,8 +16,8 @@ public class Agent {
 	public static final int STAGE_2_PATHFIND = 1;	// change later
 
 	// Class instance variables
-	Map globalMap;
-	State state;
+	//Map globalMap;
+	State globalState;
 	Explore explorer;
 	
 	int stage;
@@ -25,9 +25,9 @@ public class Agent {
 	public Agent() {
 	
 		// Initialize class instances of Map and State variables
-		globalMap = new Map();
-		state = new State();
-		explorer = new Explore(globalMap, state);
+		//globalMap = new Map();
+		globalState = new State();
+		explorer = new Explore(globalState);
 		
 		// First stage of AI will be exploring the surrounding environment 
 		stage = STAGE_1_EXPLORE;
@@ -35,11 +35,16 @@ public class Agent {
 
 
 	public char get_action(char view[][]) {
+		try {
+			Thread.sleep(200);
+		} catch (Exception e) {
+			
+		}
 		
 		System.out.println("\n==> Here is the already explored map:");
-        globalMap.updateMap(view, state);
-        state.printState();
-        globalMap.printMap();
+        this.globalState.map.updateMap(view, globalState);
+        globalState.printState();
+        this.globalState.map.printMap();
 		
 		// Explorer everywhere we can FIRST!
 		if (stage == STAGE_1_EXPLORE && explorer.stillExploring()) {
@@ -65,7 +70,7 @@ public class Agent {
 	                	case 'F': 
 	                	case 'f':
 	                			
-	                		state.moveForward();
+	                		globalState.moveForward();
 	                		
 	                		System.out.println("--> Here is the UPDATED map:");
 	                		//map.updateMap(view, state);
@@ -75,7 +80,7 @@ public class Agent {
 	                	case 'L':
 	                	case 'l':
 	                		
-	                		state.turnLeft();
+	                		globalState.turnLeft();
 	                		
 	                		System.out.println("--> Here is the UPDATED map:");
 	                		//map.updateMap(view, state);
@@ -85,7 +90,7 @@ public class Agent {
 	                	case 'R':
 	                	case 'r':
 	                		
-	                		state.turnRight();
+	                		globalState.turnRight();
 	                		
 	                		System.out.println("--> Here is the UPDATED map:");
 	                		//map.updateMap(view, state);
@@ -95,7 +100,7 @@ public class Agent {
 	                	case 'C':
 	                	case 'c':
 	                		
-	                		if (state.axe) {
+	                		if (globalState.axe) {
 	                		
 	                		} else {
 	                			System.out.println("Sorry, you don't have an AXE");
@@ -106,7 +111,7 @@ public class Agent {
 	                	case 'O':
 	                	case 'o':
 	                		
-	                		if (state.key) {
+	                		if (globalState.key) {
 	                		
 	                		} else {
 	                			System.out.println("Sorry, you don't have a KEY");
@@ -117,7 +122,7 @@ public class Agent {
 	                    case 'B':
 	                	case 'b':
 	                		
-	                		if (state.bombs > 0) {
+	                		if (globalState.bombs > 0) {
 	                		
 	                		} else {
 	                			System.out.println("Sorry, you don't have any BOMBS");
@@ -126,7 +131,7 @@ public class Agent {
 	                      
 	                    // PRINT 
 	                    case 'P':
-	                    	globalMap.printMap();	
+	                    	this.globalState.map.printMap();	
 	                }
 	            }
 	        }
@@ -188,7 +193,7 @@ public class Agent {
          System.exit(-1);
       }
       
-	  try { // scan 5-by-5 wintow around current location
+	  try { // scan 5-by-5 window around current location
          while( true ) {
             for( i=0; i < 5; i++ ) {
                for( j=0; j < 5; j++ ) {
