@@ -38,9 +38,8 @@ public class State {
         this.key = false;
         this.axe = false;
         this.gold = false;
-        this.direction = Enums.Direction.NORTH;
-        this.c.x = Map.MAP_WIDTH/2;
-        this.c.y = Map.MAP_HEIGHT/2;
+        this.direction = Enums.Direction.NORTH;        
+        this.c = new Coordinate(Map.MAP_WIDTH/2, Map.MAP_HEIGHT/2);
         this.movesMade = new ArrayList<Character>();
         this.map = new Map();
         
