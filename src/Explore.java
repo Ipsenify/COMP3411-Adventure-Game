@@ -15,9 +15,6 @@ public class Explore {
 	
 	private Enums.Direction initialDirection;
 	
-	private Coordinate c1;
-	private Coordinate c2;
-	
 	private boolean addContactPoints;
 	private ArrayList<ContactPoints> contactPoints;
 	
@@ -81,6 +78,7 @@ public class Explore {
 						
 						ContactPoints cps = new ContactPoints(coordinatesSeen);
 						contactPoints.add(cps);
+						addContactPoints = false;
 						
 					} else if (compareContactPoints()) {
 						
@@ -157,8 +155,10 @@ public class Explore {
 		if (retval == 'f') {
 			coordinatesSeen.add(s.c);
 		} else {
-			ContactPoints cps = new ContactPoints(coordinatesSeen);
-			contactPoints.add(cps);
+			addContactPoints = true;
+			
+			// TODO check
+			contactPoints.clear();
 		}
 		
 		return retval;
