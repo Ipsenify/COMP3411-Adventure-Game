@@ -13,19 +13,20 @@ public class Agent {
 	
 	// Class constants
 	public static final int STAGE_1_EXPLORE = 0;
-	public static final int STAGE_2_PATHFIND = 1;	// change later
+	public static final int STAGE_2_SETGOAL = 1;	
+	public static final int STAGE_3_PATH 	= 1;
+	public static final int STAGE_4_RETURN 	= 3;
 
 	// Class instance variables
-	//Map globalMap;
 	State globalState;
 	Explore explorer;
+	GoalGenerator goalGenerator;
 	
 	int stage;
 
 	public Agent() {
 	
 		// Initialize class instances of Map and State variables
-		//globalMap = new Map();
 		globalState = new State();
 		explorer = new Explore(globalState);
 		
@@ -35,6 +36,8 @@ public class Agent {
 
 
 	public char get_action(char view[][]) {
+		
+		// Wait for testing purposes
 		try {
 			Thread.sleep(100);
 		} catch (Exception e) {
@@ -45,100 +48,43 @@ public class Agent {
         this.globalState.map.updateMap(view, globalState);
         this.globalState.map.printMap();
         globalState.printState();
-		
-		// Explorer everywhere we can FIRST!
-		if (stage == STAGE_1_EXPLORE && explorer.stillExploring()) {
-			
-			return explorer.run();
-				
-		} else {
-
-	        int ch=0;
-	
-	        System.out.print("Enter Action(s): ");
-	        
-	        
-	
-	        try {
-	            while ( ch != -1 ) {
-	                // read character from keyboard
-	                ch  = System.in.read();
-	
-	                switch( ch ) { 
-	                	
-	                	// FORWARD
-	                	case 'F': 
-	                	case 'f':
-	                			
-	                		globalState.moveForward();
-	                		
-	                		System.out.println("--> Here is the UPDATED map:");
-	                		//map.updateMap(view, state);
-	                		return ((char) ch);
-	                
-	                	// LEFT
-	                	case 'L':
-	                	case 'l':
-	                		
-	                		globalState.turnLeft();
-	                		
-	                		System.out.println("--> Here is the UPDATED map:");
-	                		//map.updateMap(view, state);
-	                		return ((char) ch);
-	                
-	                	// RIGHT
-	                	case 'R':
-	                	case 'r':
-	                		
-	                		globalState.turnRight();
-	                		
-	                		System.out.println("--> Here is the UPDATED map:");
-	                		//map.updateMap(view, state);
-	                		return ((char) ch);
-	                		
-	                	// CHOP
-	                	case 'C':
-	                	case 'c':
-	                		
-	                		if (globalState.axe) {
-	                		
-	                		} else {
-	                			System.out.println("Sorry, you don't have an AXE");
-	                		}
-	                		return ((char) ch);
-	                
-	                	// OPEN
-	                	case 'O':
-	                	case 'o':
-	                		
-	                		if (globalState.key) {
-	                		
-	                		} else {
-	                			System.out.println("Sorry, you don't have a KEY");
-	                		}
-	                		return ((char) ch);
-	                
-	                	// BOMB
-	                    case 'B':
-	                	case 'b':
-	                		
-	                		if (globalState.bombs > 0) {
-	                		
-	                		} else {
-	                			System.out.println("Sorry, you don't have any BOMBS");
-	                		}
-	                		return ((char) ch);
-	                      
-	                    // PRINT 
-	                    case 'P':
-	                    	this.globalState.map.printMap();	
-	                }
-	            }
-	        }
-	        catch (IOException e) {
-	            System.out.println ("IO error:" + e );
-	        }
         
+        
+		
+		// 1. Explorer everywhere we can FIRST!
+		if (stage == STAGE_1_EXPLORE) {
+			
+			char moveToMake = explorer.run();
+			
+			// If we have the gold, go straight to STAGE_4_RETURN
+	        if (globalState.gold == true) {
+	        	stage = STAGE_4_RETURN;
+	        } else if (explorer.stillExploring() == false) {
+	        	stage++;
+	        }
+			
+			return moveToMake;
+		} 
+		
+		// 2. Set the intermediary goals we need to obtain the gold
+		else if (stage == STAGE_2_SETGOAL) {
+			
+			State pathState = new State(globalState);
+			pathState.giveItemsOnMap();
+			pathState.printState();
+			
+			goalGenerator = new GoalGenerator(pathState);
+			goalGenerator.run();
+		}
+		
+		else if (stage == STAGE_3_PATH) {
+			
+			
+		}
+		
+		// 4. Return the gold to [0,0]
+		else if (stage == STAGE_4_RETURN) {
+			
 		}
 
         return 0;
@@ -206,7 +152,7 @@ public class Agent {
                   }
                }
             }
-            agent.print_view(view); 						// COMMENT THIS OUT BEFORE SUBMISSION
+            //agent.print_view(view); 						// COMMENT THIS OUT BEFORE SUBMISSION
             action = agent.get_action(view);
             out.write( action );
          }

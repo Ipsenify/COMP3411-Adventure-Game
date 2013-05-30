@@ -10,19 +10,22 @@ import java.io.*;
 import java.lang.management.MemoryType;
 import java.net.*;
 
-public class Map {
+public class Map implements Iterable<Point>{
     
     // Class constants
     public static final int MAP_WIDTH = 160;
     public static final int MAP_HEIGHT = 160;
 
     // Class variables
-    //private Enums.Symbol[][] map;
     private Point[][] map;
+    
+    //public Hashtable<Enums.Symbol, ArrayList<Point>> itemLocations;
     
     // Creator method
     public Map() {
         map = new Point[MAP_WIDTH][MAP_HEIGHT];
+        
+        //itemLocations = new Hashtable<Enums.Symbol, ArrayList<Point>>();
 
         // Set all coordinated of the map to UNKNOWN at the start
         for (int i=0; i < MAP_WIDTH; i++) {
@@ -35,6 +38,8 @@ public class Map {
     }
     
     public Map(Map m) {
+    	 map = new Point[MAP_WIDTH][MAP_HEIGHT];
+    	 
     	 for (int i=0; i < MAP_WIDTH; i++) {
              for (int j=0; j < MAP_HEIGHT; j++) {
              
@@ -150,8 +155,8 @@ public class Map {
     public void printMap() {
     
     	// Set all coordinated of the map to UNKNOWN at the start
-        for (int y=60; y < 100; y++) {
-            for (int x=50; x < 100; x++) {
+        for (int y=65; y < 100; y++) {
+            for (int x=45; x < 105; x++) {
                 System.out.print(map[x][y].symbol + " ");
             }
             System.out.println();
@@ -224,5 +229,30 @@ public class Map {
     	
     	return retval;
     }
+    
+    // Return an array list of points containing the specified item
+    public ArrayList<Point> findItem(Enums.Symbol item) {
+    	ArrayList<Point> points = new ArrayList<Point>();
+    	
+    	for (Point p : this) {
+    		if (p.symbol == item) {
+    			points.add(p);
+    		}
+    	}
+    	
+    	return points;
+    }
+
+	@Override
+	public Iterator<Point> iterator() {
+		ArrayList<Point> ret = new ArrayList<Point>();
+		
+		for (Point[] p : this.map) {
+			for (Point q : p) {
+				ret.add(q);
+			}
+		}
+		return ret.iterator();
+	}
     
 }

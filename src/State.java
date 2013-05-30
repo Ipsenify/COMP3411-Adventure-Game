@@ -23,7 +23,7 @@ public class State {
     public Coordinate c;
     
     public int pastCost;
-    public int futureCost;
+    //public int futureCost;
     
     public int moveCount;
     
@@ -39,6 +39,7 @@ public class State {
         this.key = false;
         this.axe = false;
         this.gold = false;
+        this.pastCost = 0;
         this.direction = Enums.Direction.NORTH;        
         this.c = new Coordinate(Map.MAP_WIDTH/2, Map.MAP_HEIGHT/2);
         this.movesMade = new ArrayList<Character>();
@@ -52,9 +53,8 @@ public class State {
     	this.direction = s.direction;
     	this.gold = s.gold;
     	this.key = s.key;
-    	this.pastCost = s.pastCost + 1;
-    	this.c.x = s.c.x;
-    	this.c.y = s.c.y;
+    	this.pastCost = s.pastCost;
+    	this.c = new Coordinate(s.c.x, s.c.y);
     	this.movesMade = new ArrayList<Character>(s.movesMade);
     	this.map = new Map(s.map);
     }
@@ -196,7 +196,7 @@ public class State {
  		Enums.Symbol inFront = this.map.getSymbolAtCoord(coordinateInFront());
  		
  		// Forward
- 		if (canMoveForward() == true) {
+ 		if (validMove(inFront) == true) {
  			s = new State(this);
  			s.moveForward();
  			children.add(s);
@@ -273,11 +273,6 @@ public class State {
  		return retval;
  	} 
  	
- 	public boolean canMoveForward() {
- 		Enums.Symbol inFront = this.map.getSymbolAtCoord(this.coordinateInFront());
- 		return validMove(inFront);
- 	}
- 	
  	// Assuming no BOMBS
  	public boolean validMove(Enums.Symbol inFront) {
  		boolean retval = false;
@@ -306,6 +301,18 @@ public class State {
  	
  	public char lastMove() {
  		return this.movesMade.get(this.movesMade.size()-1);
+ 	}
+ 	
+ 	public void giveItemsOnMap() {
+ 		for (Point p : this.map) {
+ 			if (p.symbol == Enums.Symbol.AXE) {
+ 				this.axe = true;
+ 			} else if (p.symbol == Enums.Symbol.KEY) {
+ 				this.key = true;
+ 			} else if (p.symbol == Enums.Symbol.BOMB) {
+ 				this.bombs++;
+ 			} 
+ 		}
  	}
  
 }
