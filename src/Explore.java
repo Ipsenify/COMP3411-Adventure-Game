@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 
 public class Explore {
 	
@@ -13,8 +15,13 @@ public class Explore {
 	
 	private Enums.Direction initialDirection;
 	
+	private Coordinate c1;
+	private Coordinate c2;
+	
+	private ArrayList<Coordinate> coordinatesSeen;
 	// CONSTANTS
 	private static final int PLEDGE_PHASE = 1;
+	private static final int CENTRE_PHASE = 2;
 	
 	
 	
@@ -25,6 +32,7 @@ public class Explore {
 		this.followingWall = false;
 		this.turnCount = 0;
 		this.initialDirection = s.direction;
+		this.coordinatesSeen = new ArrayList<Coordinate>();
 	}
 	
 	public char run() {
@@ -42,6 +50,10 @@ public class Explore {
 					// When we can't move forward, turn right and start wallflower
 					move = turnRight();
 					followingWall = true;
+					// Set the initial Points of contact with object
+					// c2 will be set when the agent moves
+					c1 = s.c;
+					c2 = null;
 				}
 				
 				
@@ -50,19 +62,33 @@ public class Explore {
 				// Keeping our left hand on the wall...
 				
 				// Move left if possible
-				
 				if (this.canMoveLeft() == true && s.movesMade.get(s.movesMade.size()-1) != 'l') {
-					System.out.println("Turning Left!!!");
 					move = turnLeft();
 				} 
 				// Move forward if possible
 				else if (s.canMoveForward() == true) {
 					move = moveForward();
+					// Update c2
+					if (c2 == null) {
+						c2 = s.c;
+//						System.out.println("\n\n\n Update C2!!! \n\n\n");
+//						try {
+//							Thread.sleep(4000);
+//						} catch (Exception e) {
+//							
+//						}
+					} else if (c1.equals(coordinatesSeen.get(coordinatesSeen.size()-2)) &&
+								c2.equals(coordinatesSeen.get(coordinatesSeen.size()-1))) {
+						// Stop Pledge
+						phase = CENTRE_PHASE;
+					}
 				}
 				// Otherwise turn right
 				else {
 					move = turnRight();
 				}
+				
+				
 				
 				/*if (this.canMoveLeft() == false && s.canMoveForward() == false) {
 					move = turnRight();
@@ -80,7 +106,20 @@ public class Explore {
 				// Stop following the wall when pledge condition is met
 				if (s.direction == initialDirection && turnCount == 0) {
 					followingWall = false;
+//					System.out.println("\n\n\n Not following wall!!! \n\n\n");
+//					try {
+//						Thread.sleep(4000);
+//					} catch (Exception e) {
+//						
+//					}
 				}
+				
+			}
+		} else if (phase == CENTRE_PHASE) {
+			System.out.println("\n\n\n Centre Phase!!! \n\n\n");
+			try {
+				Thread.sleep(999999);
+			} catch (Exception e) {
 				
 			}
 		}
@@ -115,6 +154,7 @@ public class Explore {
 	
 	private char moveForward() {
 		s.moveForward();
+		coordinatesSeen.add(s.c);
 		return 'f';
 	}
 }
