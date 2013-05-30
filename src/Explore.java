@@ -18,7 +18,11 @@ public class Explore {
 	private Coordinate c1;
 	private Coordinate c2;
 	
+	private boolean addContactPoints;
+	private ArrayList<ContactPoints> contactPoints;
+	
 	private ArrayList<Coordinate> coordinatesSeen;
+	
 	// CONSTANTS
 	private static final int PLEDGE_PHASE = 1;
 	private static final int CENTRE_PHASE = 2;
@@ -33,6 +37,9 @@ public class Explore {
 		this.turnCount = 0;
 		this.initialDirection = s.direction;
 		this.coordinatesSeen = new ArrayList<Coordinate>();
+		
+		this.addContactPoints = false;
+		this.contactPoints = new ArrayList<ContactPoints>();
 	}
 	
 	public char run() {
@@ -47,13 +54,12 @@ public class Explore {
 					move = moveForward();
 				} else {
 					
-					// When we can't move forward, turn right and start wallflower
+					// When we can't move forward, turn right and start wall flower
 					move = turnRight();
 					followingWall = true;
-					// Set the initial Points of contact with object
-					// c2 will be set when the agent moves
-					c1 = s.c;
-					c2 = null;
+					
+					// Add new contact points when setting followingWall
+					this.addContactPoints = true;
 				}
 				
 				
@@ -62,23 +68,22 @@ public class Explore {
 				// Keeping our left hand on the wall...
 				
 				// Move left if possible
-				if (this.canMoveLeft() == true && s.movesMade.get(s.movesMade.size()-1) != 'l') {
+				if (s.lastMove() == 'o' || s.lastMove() == 'c') {
+					move = moveForward();
+				} else if (this.canMoveLeft() == true && s.lastMove() != 'l') {
 					move = turnLeft();
 				} 
 				// Move forward if possible
 				else if (s.canMoveForward() == true) {
 					move = moveForward();
 					// Update c2
-					if (c2 == null) {
-						c2 = s.c;
-//						System.out.println("\n\n\n Update C2!!! \n\n\n");
-//						try {
-//							Thread.sleep(4000);
-//						} catch (Exception e) {
-//							
-//						}
-					} else if (c1.equals(coordinatesSeen.get(coordinatesSeen.size()-2)) &&
-								c2.equals(coordinatesSeen.get(coordinatesSeen.size()-1))) {
+					if (addContactPoints == true) {
+						
+						ContactPoints cps = new ContactPoints(coordinatesSeen);
+						contactPoints.add(cps);
+						
+					} else if (compareContactPoints()) {
+						
 						// Stop Pledge
 						phase = CENTRE_PHASE;
 					}
@@ -87,31 +92,10 @@ public class Explore {
 				else {
 					move = turnRight();
 				}
-				
-				
-				
-				/*if (this.canMoveLeft() == false && s.canMoveForward() == false) {
-					move = turnRight();
-				} else if (this.canMoveLeft() == false && s.canMoveForward() == true) {
-					move = moveForward();
-				} else if (this.canMoveLeft() == true && s.canMoveForward() == true) {
-					System.out.println(s.lastMove());
-					if (s.lastMove() == 'l') {
-						move = moveForward();
-					} else {
-						move = turnLeft();
-					}
-				}*/
-					
+
 				// Stop following the wall when pledge condition is met
 				if (s.direction == initialDirection && turnCount == 0) {
 					followingWall = false;
-//					System.out.println("\n\n\n Not following wall!!! \n\n\n");
-//					try {
-//						Thread.sleep(4000);
-//					} catch (Exception e) {
-//						
-//					}
 				}
 				
 			}
@@ -125,6 +109,20 @@ public class Explore {
 		}
 		
 		return move;
+	}
+	
+	// Check that the last two points visited have been
+	// visited previously 
+	private boolean compareContactPoints() {
+		boolean retval = false;
+		
+		for (ContactPoints cps : contactPoints) {
+			if (cps.compare(coordinatesSeen)) {
+				retval = true;
+			}
+		}
+		
+		return retval;
 	}
 	
 	private boolean canMoveLeft() {
@@ -153,8 +151,16 @@ public class Explore {
 	}
 	
 	private char moveForward() {
-		s.moveForward();
-		coordinatesSeen.add(s.c);
-		return 'f';
+		char retval = s.moveForward();
+		
+		// Only update the explored coordinates if we actually move forward
+		if (retval == 'f') {
+			coordinatesSeen.add(s.c);
+		} else {
+			ContactPoints cps = new ContactPoints(coordinatesSeen);
+			contactPoints.add(cps);
+		}
+		
+		return retval;
 	}
 }

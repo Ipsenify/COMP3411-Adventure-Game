@@ -63,36 +63,52 @@ public class State {
     // Print method used for debugging
     public void printState() {
     	System.out.println("| bombs = "+ bombs +" | key = "+ key +" | axe = "+ axe +" | direction = "+ direction +" | posX = "+ c.x +" | posY = "+ c.y +" |");
-    	System.out.print("\n Moves Made:");
-    	for(char c : this.movesMade) {
-    		System.out.print(" " + c);
-    	}
-    	System.out.println("\nMoveCount: " + moveCount);
+    	//System.out.print("\n Moves Made:");
+    	//for(char c : this.movesMade) {
+    	//	System.out.print(" " + c);
+    	//}
+    	System.out.println("MoveCount = " + moveCount);
     }
  
- 	// Update the position of the agent relative to their direction
- 	public void moveForward() {
- 		movesMade.add('f');
- 		moveCount++;
+ 	// Move the agent forward (relative to their direction)
+    // If removable object in front, then remove it before moving forward
+    // ASSUMING it is legal to move forward
+ 	public char moveForward() {
  		
  		Coordinate coordInFront = coordinateInFront();
+ 		Enums.Symbol symbolInFront = this.map.getSymbolAtCoord(coordInFront);
  		
- 		Enums.Symbol itemInFront = this.map.getSymbolAtCoord(coordInFront);
+ 		char moveMade = 'f';
  		
- 		if (itemInFront == Enums.Symbol.AXE) {
+ 		// IGNORE BOMBS FOR NOW
+ 		if (symbolInFront == Enums.Symbol.TREE) {
+ 			movesMade.add('c');
+ 	 		moveCount++;
+ 	 		moveMade = 'c';
+ 		} else if (symbolInFront == Enums.Symbol.DOOR) {
+ 			movesMade.add('o');
+ 	 		moveCount++;
+ 	 		moveMade = 'o';
+ 		} else {
+ 			movesMade.add('f');
+ 	 		moveCount++;
+ 	 		this.c = coordInFront;
+ 		}
+
+ 		// Pick up items
+ 		if (symbolInFront == Enums.Symbol.AXE) {
  			this.axe = true;
- 		} else if (itemInFront == Enums.Symbol.BOMB) {
+ 		} else if (symbolInFront == Enums.Symbol.BOMB) {
  			this.bombs++;
- 		} else if (itemInFront == Enums.Symbol.KEY) {
+ 		} else if (symbolInFront == Enums.Symbol.KEY) {
  			this.key = true;
- 		} else if (itemInFront == Enums.Symbol.GOLD) {
+ 		} else if (symbolInFront == Enums.Symbol.GOLD) {
  			this.gold = true;
  		}
  		
  		this.map.clearLocation(coordInFront);
- 		
- 		this.c = coordInFront;
 
+ 		return moveMade;
  	}
  	
  	// Update the direction of the agent when it turns left

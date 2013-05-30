@@ -36,15 +36,15 @@ public class Agent {
 
 	public char get_action(char view[][]) {
 		try {
-			Thread.sleep(500);
+			Thread.sleep(100);
 		} catch (Exception e) {
 			
 		}
 		
 		System.out.println("\n==> Here is the already explored map:");
         this.globalState.map.updateMap(view, globalState);
-        globalState.printState();
         this.globalState.map.printMap();
+        globalState.printState();
 		
 		// Explorer everywhere we can FIRST!
 		if (stage == STAGE_1_EXPLORE && explorer.stillExploring()) {

@@ -150,8 +150,8 @@ public class Map {
     public void printMap() {
     
     	// Set all coordinated of the map to UNKNOWN at the start
-        for (int y=70; y < 90; y++) {
-            for (int x=70; x < 90; x++) {
+        for (int y=60; y < 100; y++) {
+            for (int x=50; x < 100; x++) {
                 System.out.print(map[x][y].symbol + " ");
             }
             System.out.println();
