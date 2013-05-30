@@ -152,7 +152,7 @@ public class Map {
     	// Set all coordinated of the map to UNKNOWN at the start
         for (int y=70; y < 90; y++) {
             for (int x=70; x < 90; x++) {
-                System.out.print(map[x][y].symbol);
+                System.out.print(map[x][y].symbol + " ");
             }
             System.out.println();
         }

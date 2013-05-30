@@ -36,7 +36,7 @@ public class Agent {
 
 	public char get_action(char view[][]) {
 		try {
-			Thread.sleep(200);
+			Thread.sleep(500);
 		} catch (Exception e) {
 			
 		}
