@@ -9,7 +9,7 @@ import java.util.*;
 import java.io.*;
 import java.net.*;
 
-public class State {
+public class State implements Comparator<State>{
 
     // Class variables
     public int bombs;
@@ -23,13 +23,19 @@ public class State {
     public Coordinate c;
     
     public int pastCost;
-    //public int futureCost;
+    public int futureCost;
     
     public int moveCount;
     
     public ArrayList<Character> movesMade;
     
     public Map map;
+    
+    // Class Constants
+    public static final int COST_ITEM = 1;
+    public static final int COST_MOVE = 1;
+    public static final int COST_TURN = 1;
+    public static final int COST_BOMB = 2;
     
     // Creator method
     public State() {
@@ -78,21 +84,32 @@ public class State {
  		Coordinate coordInFront = coordinateInFront();
  		Enums.Symbol symbolInFront = this.map.getSymbolAtCoord(coordInFront);
  		
- 		char moveMade = 'f';
+ 		char moveMade = '?';
  		
- 		// IGNORE BOMBS FOR NOW
- 		if (symbolInFront == Enums.Symbol.TREE) {
+ 		if (symbolInFront == Enums.Symbol.TREE && this.axe == true) {
  			movesMade.add('c');
  	 		moveCount++;
  	 		moveMade = 'c';
- 		} else if (symbolInFront == Enums.Symbol.DOOR) {
+ 	 		pastCost += COST_ITEM;
+ 		} else if (symbolInFront == Enums.Symbol.DOOR && this.key == true) {
  			movesMade.add('o');
  	 		moveCount++;
  	 		moveMade = 'o';
+ 	 		pastCost += COST_ITEM;
+ 		} else if (this.bombs > 0 && (symbolInFront == Enums.Symbol.DOOR ||
+ 									  symbolInFront == Enums.Symbol.TREE ||
+ 									  symbolInFront == Enums.Symbol.WALL)){
+ 			movesMade.add('b');
+ 			moveCount++;
+ 			this.bombs--;
+ 			moveMade = 'b';
+ 			pastCost += COST_BOMB;
  		} else {
  			movesMade.add('f');
  	 		moveCount++;
  	 		this.c = coordInFront;
+ 	 		moveMade = 'f';
+ 	 		pastCost += COST_MOVE;
  		}
 
  		// Pick up items
@@ -105,7 +122,7 @@ public class State {
  		} else if (symbolInFront == Enums.Symbol.GOLD) {
  			this.gold = true;
  		}
- 		
+
  		this.map.clearLocation(coordInFront);
 
  		return moveMade;
@@ -116,6 +133,7 @@ public class State {
  		
  		movesMade.add('l');
  		moveCount++;
+ 		this.pastCost += COST_TURN;
  		
  		switch (direction) {
  			case NORTH:
@@ -141,6 +159,7 @@ public class State {
  		
  		movesMade.add('r');
  		moveCount++;
+ 		this.pastCost += COST_TURN;
  		
  		switch (direction) {
  			case NORTH:
@@ -162,81 +181,77 @@ public class State {
  	}
  	
  	// Assume usage is valid
- 	public void useKey() {
- 		moveCount++;
- 		this.map.clearLocation(coordinateInFront());
- 		this.movesMade.add('o');
- 	}
- 	public void useBomb() {
- 		moveCount++;
- 		this.map.clearLocation(coordinateInFront());
- 		this.bombs--;
- 		this.movesMade.add('b');
- 	}
- 	public void useAxe() {
- 		moveCount++;
- 		this.map.clearLocation(coordinateInFront());
- 		this.movesMade.add('c');
- 	}
+// 	public void useKey() {
+// 		moveCount++;
+// 		this.map.clearLocation(coordinateInFront());
+// 		this.movesMade.add('o');
+// 	}
+// 	public void useBomb() {
+// 		moveCount++;
+// 		this.map.clearLocation(coordinateInFront());
+// 		this.bombs--;
+// 		this.movesMade.add('b');
+// 	}
+// 	public void useAxe() {
+// 		moveCount++;
+// 		this.map.clearLocation(coordinateInFront());
+// 		this.movesMade.add('c');
+// 	}
  	
- 	public Iterable<State> getChildren() {
+ 	// Returns an iterable list of the possible children of the current state
+ 	public Iterable<State> getChildren(Point goal) {
  		ArrayList<State> children = new ArrayList<State>();
  		State s;
+ 		Enums.Symbol nextPoint;
  		
  		// Left
- 		s = new State(this);
- 		s.turnLeft();
- 		children.add(s);
- 		
- 		// Right
- 		s = new State(this);
- 		s.turnRight();
- 		children.add(s);
- 		
- 		Enums.Symbol inFront = this.map.getSymbolAtCoord(coordinateInFront());
- 		
- 		// Forward
- 		if (validMove(inFront) == true) {
+ 		nextPoint = this.map.getSymbolAtCoord(coordinateOnLeft());
+ 		if (validChild(nextPoint)) {
  			s = new State(this);
+ 			s.turnLeft();
  			s.moveForward();
+ 			if (s.lastMove() != 'f') {
+ 				s.moveForward();
+ 			}
+ 			s.calculateFutureCost(goal);
  			children.add(s);
  		}
  		
- 		// Use items if possible
- 		switch(inFront) {
- 			case DOOR:
- 				s = new State(this);
- 				if (this.key == true) {
- 					s.useKey();
- 					children.add(s);
- 				} else if (this.bombs > 0) {
- 					s.useBomb();
- 					children.add(s);
- 				}
- 				break;
-			case TREE:
-				s = new State(this);
- 				if (this.axe == true) {
- 					s.useAxe();
- 					children.add(s);
- 				} else if (this.bombs > 0) {
- 					s.useBomb();
- 					children.add(s);
- 				}
- 				break;
-			case WALL:
-				s = new State(this);
-				if (this.bombs > 0) {
- 					s.useBomb();
- 					children.add(s);
- 				}
-				break;
-			default:
-				break;
-			
-
+ 		// Right
+ 		nextPoint = this.map.getSymbolAtCoord(coordinateOnRight());
+ 		if (validChild(nextPoint)) {
+ 			s = new State(this);
+ 			s.turnRight();
+ 			s.moveForward();
+ 			if (s.lastMove() != 'f') {
+ 				s.moveForward();
+ 			}
+ 			s.calculateFutureCost(goal);
+ 			children.add(s);
  		}
  		
+ 		// Forward
+ 		nextPoint = this.map.getSymbolAtCoord(coordinateInFront());
+ 		if (validChild(nextPoint)) {
+ 			s = new State(this);
+ 			s.moveForward();
+ 			if (s.lastMove() != 'f') {
+ 				s.moveForward();
+ 			}
+ 			s.calculateFutureCost(goal);
+ 			children.add(s);
+ 		}
+ 		
+ 		// Back
+ 		nextPoint = this.map.getSymbolAtCoord(coordinateBehind());
+ 		if (validChild(nextPoint)) {
+ 			s = new State(this);
+ 			s.turnLeft();
+ 			s.turnLeft();
+ 			s.moveForward();
+ 			s.calculateFutureCost(goal);
+ 			children.add(s);
+ 		}
  		
  		return children;
  	}
@@ -252,6 +267,22 @@ public class State {
     		retval.x++;
     	} else if (this.direction == Enums.Direction.WEST) {
     		retval.x--;
+    	}
+ 		
+ 		return retval;
+ 	}
+ 	
+ 	public Coordinate coordinateBehind() {
+ 		Coordinate retval = new Coordinate(this.c.x, this.c.y);
+ 		
+ 		if (this.direction == Enums.Direction.NORTH) {
+    		retval.y++;
+    	} else if (this.direction == Enums.Direction.SOUTH) {
+    		retval.y--;
+    	} else if (this.direction == Enums.Direction.EAST) {
+    		retval.x--;
+    	} else if (this.direction == Enums.Direction.WEST) {
+    		retval.x++;
     	}
  		
  		return retval;
@@ -273,7 +304,24 @@ public class State {
  		return retval;
  	} 
  	
+ 	public Coordinate coordinateOnRight() {
+ 		Coordinate retval = new Coordinate(this.c.x, this.c.y);
+ 		
+ 		if (this.direction == Enums.Direction.NORTH) {
+    		retval.x++;
+    	} else if (this.direction == Enums.Direction.SOUTH) {
+    		retval.x--;
+    	} else if (this.direction == Enums.Direction.EAST) {
+    		retval.y++;
+    	} else if (this.direction == Enums.Direction.WEST) {
+    		retval.y--;
+    	}
+ 		
+ 		return retval;
+ 	} 
+ 	
  	// Assuming no BOMBS
+ 	// Used for exploration, will not use consumables (bombs)
  	public boolean validMove(Enums.Symbol inFront) {
  		boolean retval = false;
  		
@@ -299,20 +347,93 @@ public class State {
  		return retval;
  	}
  	
+ 	// Used for child generation
+ 	public boolean validChild(Enums.Symbol s) {
+ 		boolean retval = false;
+ 		
+ 		if (s == Enums.Symbol.EMPTY) {
+ 			retval = true;
+ 		} 
+ 		
+ 		else if (s == Enums.Symbol.DOOR && this.key == true) {
+ 			retval = true;	
+ 		} 
+ 		
+ 		else if (s == Enums.Symbol.TREE && this.axe == true) {
+ 			retval = true;	
+ 		}
+ 
+ 		else if (s == Enums.Symbol.AXE || 
+ 				s == Enums.Symbol.KEY || 
+ 				s == Enums.Symbol.BOMB ||
+ 				s == Enums.Symbol.GOLD) {
+ 			retval = true;
+ 		} else if (this.bombs > 0 && s != Enums.Symbol.WATER) {
+ 			retval = true;
+ 		}
+ 		
+ 		return retval;
+ 	}
+ 	
  	public char lastMove() {
  		return this.movesMade.get(this.movesMade.size()-1);
  	}
+
+	@Override
+	public int compare(State s1, State s2) {
+		int cost1 = s1.pastCost + s1.futureCost;
+		int cost2 = s2.pastCost + s2.futureCost;
+		return cost1 - cost2;
+	}
+	
+	public boolean isEqual(State compareTo) {
+		boolean retval = true;
+		if (this.c.x != compareTo.c.x || 
+				this.c.y != compareTo.c.y ) {
+			retval = false;
+		} else if (this.direction != compareTo.direction) {
+			retval = false;
+		}
+		return retval;
+	}
+	
+	public void calculateFutureCost(Point goal) {
+		int cost = Math.abs((goal.x - this.c.x) + (goal.y - this.c.y));
+		this.futureCost = cost;
+	}
+	
+	public int getCost() {
+		return this.pastCost + this.futureCost;
+	}
+	
+	// Given a move, apply the necessary changes to the state
+	public void makeMove(char c) {
+		if (c == 'f') {
+			this.moveForward();
+		} else if (c == 'o' || c == 'c' || c == 'b') {
+			this.map.clearLocation(this.coordinateInFront());	
+			if (c == 'b') {
+				this.bombs--;
+			}
+			
+		} else if (c == 'l') {
+			this.turnLeft();
+		} else if (c == 'r') {
+			this.turnRight();
+		}
+	}
+	
  	
- 	public void giveItemsOnMap() {
- 		for (Point p : this.map) {
- 			if (p.symbol == Enums.Symbol.AXE) {
- 				this.axe = true;
- 			} else if (p.symbol == Enums.Symbol.KEY) {
- 				this.key = true;
- 			} else if (p.symbol == Enums.Symbol.BOMB) {
- 				this.bombs++;
- 			} 
- 		}
- 	}
+// 	public void giveItemsOnMap() {
+// 		for (Point p : this.map) {
+// 			if (p.symbol == Enums.Symbol.AXE) {
+// 				this.axe = true;
+// 			} else if (p.symbol == Enums.Symbol.KEY) {
+// 				this.key = true;
+// 			} else if (p.symbol == Enums.Symbol.BOMB) {
+// 				this.bombs++;
+// 			} 
+// 		}
+// 	}
  
 }

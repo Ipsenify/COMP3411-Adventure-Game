@@ -242,7 +242,24 @@ public class Map implements Iterable<Point>{
     	
     	return points;
     }
-
+    
+    // Return a list of all Points on the map containing items
+    public ArrayList<Point> findItemsOnMap() {
+    	ArrayList<Point> points = new ArrayList<Point>();
+    	
+ 		for (Point p : this) {
+ 			if (p.symbol == Enums.Symbol.AXE) {
+ 				points.add(p);
+ 			} else if (p.symbol == Enums.Symbol.KEY) {
+ 				points.add(p);
+ 			} else if (p.symbol == Enums.Symbol.BOMB) {
+ 				points.add(p);
+ 			} 
+ 		}
+ 		
+ 		return points;
+ 	}
+    
 	@Override
 	public Iterator<Point> iterator() {
 		ArrayList<Point> ret = new ArrayList<Point>();

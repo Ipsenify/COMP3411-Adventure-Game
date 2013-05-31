@@ -14,13 +14,15 @@ public class Agent {
 	// Class constants
 	public static final int STAGE_1_EXPLORE = 0;
 	public static final int STAGE_2_SETGOAL = 1;	
-	public static final int STAGE_3_PATH 	= 1;
+	public static final int STAGE_3_PATH 	= 2;
 	public static final int STAGE_4_RETURN 	= 3;
 
 	// Class instance variables
 	State globalState;
 	Explore explorer;
 	GoalGenerator goalGenerator;
+	
+	ArrayList<Character> pathToExecute;
 	
 	int stage;
 
@@ -29,6 +31,8 @@ public class Agent {
 		// Initialize class instances of Map and State variables
 		globalState = new State();
 		explorer = new Explore(globalState);
+		
+		pathToExecute = new ArrayList<Character>();
 		
 		// First stage of AI will be exploring the surrounding environment 
 		stage = STAGE_1_EXPLORE;
@@ -60,7 +64,7 @@ public class Agent {
 	        if (globalState.gold == true) {
 	        	stage = STAGE_4_RETURN;
 	        } else if (explorer.stillExploring() == false) {
-	        	stage++;
+	        	stage += 2;	//TODO
 	        }
 			
 			return moveToMake;
@@ -69,17 +73,53 @@ public class Agent {
 		// 2. Set the intermediary goals we need to obtain the gold
 		else if (stage == STAGE_2_SETGOAL) {
 			
-			State pathState = new State(globalState);
-			pathState.giveItemsOnMap();
-			pathState.printState();
+			//State pathState = new State(globalState);
+			//pathState.giveItemsOnMap();
+			//pathState.printState();
 			
-			goalGenerator = new GoalGenerator(pathState);
+			//goalGenerator = new GoalGenerator(pathState);
+			
+			goalGenerator = new GoalGenerator(new State(globalState));
+			
+			// Generate an ArrayList of Points that are required to be reach
+			// in order to get the gold
 			goalGenerator.run();
+			
+			// TESTING A* WORKS
+			ArrayList<Point> goalList = goalGenerator.getGoalList();
+			System.out.println("\n\n\nGENERATED GOAL LIST (size = "+goalList.size()+": \n");
+			int count = 1;
+			for (Point p : goalList) {
+				System.out.println("goal "+count+" = " + p.symbol);
+				count++;
+			}
 		}
 		
+		// 3. Take the first goal and path to it
+		// 	  Repeat until all goals have been made
 		else if (stage == STAGE_3_PATH) {
 			
-			
+			// TESTING
+			if (pathToExecute.size() > 0) {
+				
+				char moveToMake = pathToExecute.remove(0);
+				
+				globalState.makeMove(moveToMake);
+				
+				return moveToMake;
+				
+			} else {
+				Path pathFinder = new Path(new State(globalState), globalState.map.findItem(Enums.Symbol.KEY).get(0));
+				System.out.println("\n\n\n ABOUT TO PATH TO KEY: \n");
+				ArrayList<Character> moves = pathFinder.movesToPoint();
+				
+				pathToExecute.addAll(moves);
+				
+//				System.out.println("\n\n\n MOVES TO KEY: \n");
+//				for (Character c : moves) {
+//					System.out.println(c);
+//				}
+			}
 		}
 		
 		// 4. Return the gold to [0,0]
