@@ -5,7 +5,6 @@
 /*  UNSW Session 1, 2013
 */
 
-import java.util.*;
 import java.io.*;
 import java.net.*;
 

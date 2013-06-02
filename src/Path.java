@@ -42,66 +42,31 @@ public class Path {
 			if (current.pastCost > this.pastCostLimit) {
 				return null;
 			}
-//			System.out.println("\nPARENT STATE:");
-//			current.printState();
-//			current.map.printMap(current.c, current.direction);
-//			
-//			try {
-// 				Thread.sleep(4000);
-// 			} catch (Exception e) {
-// 				
-// 			}
 			
+			// Dont explore the current node again
 			closedSet.add(current);
 			
 			// Current = Goal
 			if (current.c.x == goal.x && current.c.y == goal.y) {
-//				System.out.println("\nGOAL FOUND!!!!");
-//				current.printState();
-//				current.map.printMap(current.c, current.direction);
-//				
-//				try {
-//	 				Thread.sleep(4000);
-//	 			} catch (Exception e) {
-//	 				
-//	 			}
-
 				return current.movesMade;
 			}
 			
+			// Get the children of the current state
 			ArrayList<State> children = current.getChildren(goal);
 			
-//			System.out.println("\n\nChildren list size = "+children.size());
-			
 			for (State child : children) {
-				
-//				child.printState();
-////				child.map.printMap(child.c, child.direction);
-//				
-//				try {
-//	 				Thread.sleep(2000);
-//	 			} catch (Exception e) {
-//	 				
-//	 			}
 
 				if (listContains(closedSet, child) || listContains(openSet, child)) {
 					//Do Nothing
 				} else {
-//					child.printState();
-//					child.map.printMap(child.c, child.direction);
-//					
-//					try {
-//		 				Thread.sleep(2000);
-//		 			} catch (Exception e) {
-//		 				
-//		 			}
+					// If the state is new, add it to the list of states to explore
 					this.openSet.offer(child);
 				}
 			}
 			
 			
 		}
-		
+		// Else return null, as an error
 		return null;
 	}
 	

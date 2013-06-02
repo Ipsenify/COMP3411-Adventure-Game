@@ -4,7 +4,6 @@ import java.util.ArrayList;
 public class Explore {
 	
 	// VARIABLES
-	private Map m;
 	private State s;
 	
 	private int phase;
@@ -30,7 +29,6 @@ public class Explore {
 	
 	
 	public Explore(State s) {
-		this.m = s.map;
 		this.s = s;
 		this.phase = PLEDGE_PHASE;
 		this.followingWall = false;
@@ -43,9 +41,6 @@ public class Explore {
 		this.addContactPoints = false;
 		this.contactPoints = new ArrayList<ContactPoints>();
 	}
-	
-	// TODO add A* to Items when spotted
-	// restrict number of moves and no unknowns
 	
 	public char run() {
 		char move = '?';	// Should never happen
@@ -214,7 +209,6 @@ public class Explore {
 		} else {
 			addContactPoints = true;
 			
-			// TODO check
 			contactPoints.clear();
 		}
 		

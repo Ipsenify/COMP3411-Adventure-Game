@@ -6,8 +6,6 @@
 */
 
 import java.util.*;
-import java.io.*;
-import java.net.*;
 
 public class State implements Comparable<State>{
 
@@ -102,12 +100,6 @@ public class State implements Comparable<State>{
  		} else if (this.bombs > 0 && (symbolInFront == Enums.Symbol.DOOR ||
  									  symbolInFront == Enums.Symbol.TREE ||
  									  symbolInFront == Enums.Symbol.WALL)){
-// 			System.out.println("\n\n BOMBING \n\n");
-// 			try {
-// 				Thread.sleep(2000);
-// 			} catch (Exception e) {
-// 				
-// 			}
  			movesMade.add('b');
  			moveCount++;
  			this.bombs--;
@@ -188,31 +180,12 @@ public class State implements Comparable<State>{
  		}
  	}
  	
- 	// Assume usage is valid
-// 	public void useKey() {
-// 		moveCount++;
-// 		this.map.clearLocation(coordinateInFront());
-// 		this.movesMade.add('o');
-// 	}
-// 	public void useBomb() {
-// 		moveCount++;
-// 		this.map.clearLocation(coordinateInFront());
-// 		this.bombs--;
-// 		this.movesMade.add('b');
-// 	}
-// 	public void useAxe() {
-// 		moveCount++;
-// 		this.map.clearLocation(coordinateInFront());
-// 		this.movesMade.add('c');
-// 	}
- 	
- 	// Returns an iterable list of the possible children of the current state
+ 	// Returns list of the possible children of the current state
  	public ArrayList<State> getChildren(Point goal) {
  		ArrayList<State> children = new ArrayList<State>();
-// 		State s;
  		Enums.Symbol nextPoint;
  		
- 		// Left
+ 		// Left child
  		nextPoint = this.map.getSymbolAtCoord(coordinateOnLeft());
  		if (validChild(nextPoint)) {
  			State s = new State(this);
@@ -224,16 +197,9 @@ public class State implements Comparable<State>{
  			s.calculateFutureCost(goal);
  			children.add(s);
  			
-// 			System.out.println("\nADDING CHILD STATE - LEFT: ");
-// 			s.printState();
-// 			try {
-// 				Thread.sleep(2000);
-// 			} catch (Exception e) {
-// 				
-// 			}
  		}
  		
- 		// Right
+ 		// Right child
  		nextPoint = this.map.getSymbolAtCoord(coordinateOnRight());
  		if (validChild(nextPoint)) {
  			State s = new State(this);
@@ -247,16 +213,9 @@ public class State implements Comparable<State>{
  			s.calculateFutureCost(goal);
  			children.add(s);
  			
-// 			System.out.println("\nADDING CHILD STATE - RIGHT: ");
-// 			s.printState();
-// 			try {
-// 				Thread.sleep(2000);
-// 			} catch (Exception e) {
-// 				
-// 			}
  		}
  		
- 		// Forward
+ 		// Forward child
  		nextPoint = this.map.getSymbolAtCoord(coordinateInFront());
  		if (validChild(nextPoint)) {
  			State s = new State(this);
@@ -267,16 +226,9 @@ public class State implements Comparable<State>{
  			s.calculateFutureCost(goal);
  			children.add(s);
  			
-// 			System.out.println("\nADDING CHILD STATE - FORWARD: ");
-// 			s.printState();
-// 			try {
-// 				Thread.sleep(2000);
-// 			} catch (Exception e) {
-// 				
-// 			}
  		}
  		
- 		// Back
+ 		// Back right
  		nextPoint = this.map.getSymbolAtCoord(coordinateBehind());
  		if (validChild(nextPoint)) {
  			State s = new State(this);
@@ -286,18 +238,12 @@ public class State implements Comparable<State>{
  			s.calculateFutureCost(goal);
  			children.add(s);
  			
-// 			System.out.println("\nADDING CHILD STATE - BACK: ");
-// 			s.printState();
-// 			try {
-// 				Thread.sleep(2000);
-// 			} catch (Exception e) {
-// 				
-// 			}
  		}
  		
  		return children;
  	}
  	
+ 	// Returns the coordinate in front of the current location
  	public Coordinate coordinateInFront() {
  		Coordinate retval = new Coordinate(this.c.x, this.c.y);
  		
@@ -314,6 +260,7 @@ public class State implements Comparable<State>{
  		return retval;
  	}
  	
+ // Returns the coordinate behind of the current location
  	public Coordinate coordinateBehind() {
  		Coordinate retval = new Coordinate(this.c.x, this.c.y);
  		
@@ -330,6 +277,7 @@ public class State implements Comparable<State>{
  		return retval;
  	}
  	
+ // Returns the coordinate to the left of the current location
  	public Coordinate coordinateOnLeft() {
  		Coordinate retval = new Coordinate(this.c.x, this.c.y);
  		
@@ -346,6 +294,7 @@ public class State implements Comparable<State>{
  		return retval;
  	} 
  	
+ // Returns the coordinate to the right of the current location
  	public Coordinate coordinateOnRight() {
  		Coordinate retval = new Coordinate(this.c.x, this.c.y);
  		
@@ -363,6 +312,7 @@ public class State implements Comparable<State>{
  	} 
  	
  	// Used for exploration, will not use consumables (bombs)
+ 	// Tests whether a move is valid in the current state
  	public boolean validMove(Enums.Symbol inFront) {
  		boolean retval = false;
  		
@@ -389,6 +339,7 @@ public class State implements Comparable<State>{
  	}
  	
  	// Used for child generation
+ 	// Tests whether a move is valid in the current state
  	public boolean validChild(Enums.Symbol s) {
  		boolean retval = false;
  		
@@ -416,16 +367,10 @@ public class State implements Comparable<State>{
  		return retval;
  	}
  	
+ 	// Returns the last move made
  	public char lastMove() {
  		return this.movesMade.get(this.movesMade.size()-1);
  	}
-
-	/*@Override
-	public int compare(State s1, State s2) {
-		int cost1 = s1.pastCost + s1.futureCost;
-		int cost2 = s2.pastCost + s2.futureCost;
-		return cost1 - cost2;
-	}*/
  	
  	@Override
  	public int compareTo(State s) {
@@ -443,6 +388,7 @@ public class State implements Comparable<State>{
 		return retval;
 	}
 	
+	// Use Manhattan to predict future cost
 	public void calculateFutureCost(Point goal) {
 		int cost = Math.abs(goal.x - this.c.x) + Math.abs(goal.y - this.c.y);
 		this.futureCost = cost;
@@ -470,17 +416,4 @@ public class State implements Comparable<State>{
 			
 		}
 	}
- 	
-// 	public void giveItemsOnMap() {
-// 		for (Point p : this.map) {
-// 			if (p.symbol == Enums.Symbol.AXE) {
-// 				this.axe = true;
-// 			} else if (p.symbol == Enums.Symbol.KEY) {
-// 				this.key = true;
-// 			} else if (p.symbol == Enums.Symbol.BOMB) {
-// 				this.bombs++;
-// 			} 
-// 		}
-// 	}
- 
 }
