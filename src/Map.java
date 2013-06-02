@@ -23,7 +23,7 @@ public class Map implements Iterable<Point>{
     
     // Creator method
     public Map() {
-        map = new Point[MAP_WIDTH][MAP_HEIGHT];
+        this.map = new Point[MAP_WIDTH][MAP_HEIGHT];
         
         //itemLocations = new Hashtable<Enums.Symbol, ArrayList<Point>>();
 
@@ -31,14 +31,14 @@ public class Map implements Iterable<Point>{
         for (int i=0; i < MAP_WIDTH; i++) {
             for (int j=0; j < MAP_HEIGHT; j++) {
             
-            	map[i][j] = new Point(i, j, Enums.Symbol.UNKNOWN);
+            	this.map[i][j] = new Point(i, j, Enums.Symbol.UNKNOWN);
             }
         }
         
     }
     
     public Map(Map m) {
-    	 map = new Point[MAP_WIDTH][MAP_HEIGHT];
+    	 this.map = new Point[MAP_WIDTH][MAP_HEIGHT];
     	 
     	 for (int i=0; i < MAP_WIDTH; i++) {
              for (int j=0; j < MAP_HEIGHT; j++) {
@@ -64,7 +64,7 @@ public class Map implements Iterable<Point>{
     			for (int y_v=0; y_v < view[0].length; y_v++) {
     				
     				if (x_m == state.c.x && y_m == state.c.y) {
-    					map[x_m][y_m].symbol = Enums.agentDirection(state.direction);
+    					map[x_m][y_m].symbol = Enums.Symbol.EMPTY;
     				} else {	
     					map[x_m][y_m].symbol = Enums.charToEnum(view[y_v][x_v]);
     				}
@@ -86,7 +86,7 @@ public class Map implements Iterable<Point>{
     			for (int y_v=view[0].length-1; y_v >= 0; y_v--) {
     			
     				if (x_m == state.c.x && y_m == state.c.y) {
-    					map[x_m][y_m].symbol = Enums.agentDirection(state.direction);
+    					map[x_m][y_m].symbol = Enums.Symbol.EMPTY;
     				} else {	
     					map[x_m][y_m].symbol = Enums.charToEnum(view[y_v][x_v]);
     				}
@@ -108,7 +108,7 @@ public class Map implements Iterable<Point>{
     			int y_m = state.c.y - view[0].length/2;
 				for (int x_v=0; x_v < view.length; x_v++) {
     				if (x_m == state.c.x && y_m == state.c.y) {
-    					map[x_m][y_m].symbol = Enums.agentDirection(state.direction);
+    					map[x_m][y_m].symbol = Enums.Symbol.EMPTY;
     				} else {	
     					map[x_m][y_m].symbol = Enums.charToEnum(view[y_v][x_v]);
     				}
@@ -130,7 +130,7 @@ public class Map implements Iterable<Point>{
     			int y_m = state.c.y - view[0].length/2;
     			for (int x_v=view.length-1; x_v >= 0; x_v--) {
     				if (x_m == state.c.x && y_m == state.c.y) {
-    					map[x_m][y_m].symbol = Enums.agentDirection(state.direction);
+    					map[x_m][y_m].symbol = Enums.Symbol.EMPTY;
     				} else {	
     					map[x_m][y_m].symbol = Enums.charToEnum(view[y_v][x_v]);
     				}
@@ -152,16 +152,29 @@ public class Map implements Iterable<Point>{
     }
     
     // Print a ascii version of the entire map
-    public void printMap() {
-    
+//    public void printMap() {
+//    
+//    	// Set all coordinated of the map to UNKNOWN at the start
+//        for (int y=65; y < 100; y++) {
+//            for (int x=45; x < 105; x++) {
+//                System.out.print(map[x][y].symbol + " ");
+//            }
+//            System.out.println();
+//        }
+//    }
+    public void printMap(Coordinate c, Enums.Direction d) {
+    	
     	// Set all coordinated of the map to UNKNOWN at the start
         for (int y=65; y < 100; y++) {
             for (int x=45; x < 105; x++) {
-                System.out.print(map[x][y].symbol + " ");
+            	if (x == c.x && y == c.y) {
+            		System.out.print(Enums.agentDirection(d) + " ");
+            	} else {
+            		System.out.print(map[x][y].symbol + " ");
+            	}
             }
             System.out.println();
         }
-    
     }
     
     // Return a coordinate that is surrounded by the most UNKNOWN symbols

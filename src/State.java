@@ -54,6 +54,7 @@ public class State implements Comparator<State>{
     }
     
     public State (State s) {
+    	this.moveCount = s.moveCount;
     	this.axe = s.axe;
     	this.bombs = s.bombs;
     	this.direction = s.direction;
@@ -69,11 +70,11 @@ public class State implements Comparator<State>{
     // Print method used for debugging
     public void printState() {
     	System.out.println("| bombs = "+ bombs +" | key = "+ key +" | axe = "+ axe +" | direction = "+ direction +" | posX = "+ c.x +" | posY = "+ c.y +" |");
-    	//System.out.print("\n Moves Made:");
-    	//for(char c : this.movesMade) {
-    	//	System.out.print(" " + c);
-    	//}
-    	System.out.println("MoveCount = " + moveCount);
+    	System.out.print("\n Moves Made:");
+    	for(char c : this.movesMade) {
+    		System.out.print(" " + c);
+    	}
+    	System.out.println("\nMoveCount = " + moveCount);
     }
  
  	// Move the agent forward (relative to their direction)
@@ -91,19 +92,28 @@ public class State implements Comparator<State>{
  	 		moveCount++;
  	 		moveMade = 'c';
  	 		pastCost += COST_ITEM;
+ 	 		
  		} else if (symbolInFront == Enums.Symbol.DOOR && this.key == true) {
  			movesMade.add('o');
  	 		moveCount++;
  	 		moveMade = 'o';
  	 		pastCost += COST_ITEM;
+ 	 		
  		} else if (this.bombs > 0 && (symbolInFront == Enums.Symbol.DOOR ||
  									  symbolInFront == Enums.Symbol.TREE ||
  									  symbolInFront == Enums.Symbol.WALL)){
+// 			System.out.println("\n\n BOMBING \n\n");
+// 			try {
+// 				Thread.sleep(2000);
+// 			} catch (Exception e) {
+// 				
+// 			}
  			movesMade.add('b');
  			moveCount++;
  			this.bombs--;
  			moveMade = 'b';
  			pastCost += COST_BOMB;
+ 			
  		} else {
  			movesMade.add('f');
  	 		moveCount++;
@@ -122,8 +132,6 @@ public class State implements Comparator<State>{
  		} else if (symbolInFront == Enums.Symbol.GOLD) {
  			this.gold = true;
  		}
-
- 		this.map.clearLocation(coordInFront);
 
  		return moveMade;
  	}
@@ -199,15 +207,15 @@ public class State implements Comparator<State>{
 // 	}
  	
  	// Returns an iterable list of the possible children of the current state
- 	public Iterable<State> getChildren(Point goal) {
+ 	public ArrayList<State> getChildren(Point goal) {
  		ArrayList<State> children = new ArrayList<State>();
- 		State s;
+// 		State s;
  		Enums.Symbol nextPoint;
  		
  		// Left
  		nextPoint = this.map.getSymbolAtCoord(coordinateOnLeft());
  		if (validChild(nextPoint)) {
- 			s = new State(this);
+ 			State s = new State(this);
  			s.turnLeft();
  			s.moveForward();
  			if (s.lastMove() != 'f') {
@@ -215,42 +223,76 @@ public class State implements Comparator<State>{
  			}
  			s.calculateFutureCost(goal);
  			children.add(s);
+ 			
+// 			System.out.println("\nADDING CHILD STATE - LEFT: ");
+// 			s.printState();
+// 			try {
+// 				Thread.sleep(2000);
+// 			} catch (Exception e) {
+// 				
+// 			}
  		}
  		
  		// Right
  		nextPoint = this.map.getSymbolAtCoord(coordinateOnRight());
  		if (validChild(nextPoint)) {
- 			s = new State(this);
+ 			State s = new State(this);
  			s.turnRight();
  			s.moveForward();
+ 			
+ 			
  			if (s.lastMove() != 'f') {
  				s.moveForward();
  			}
  			s.calculateFutureCost(goal);
  			children.add(s);
+ 			
+// 			System.out.println("\nADDING CHILD STATE - RIGHT: ");
+// 			s.printState();
+// 			try {
+// 				Thread.sleep(2000);
+// 			} catch (Exception e) {
+// 				
+// 			}
  		}
  		
  		// Forward
  		nextPoint = this.map.getSymbolAtCoord(coordinateInFront());
  		if (validChild(nextPoint)) {
- 			s = new State(this);
+ 			State s = new State(this);
  			s.moveForward();
  			if (s.lastMove() != 'f') {
  				s.moveForward();
  			}
  			s.calculateFutureCost(goal);
  			children.add(s);
+ 			
+// 			System.out.println("\nADDING CHILD STATE - FORWARD: ");
+// 			s.printState();
+// 			try {
+// 				Thread.sleep(2000);
+// 			} catch (Exception e) {
+// 				
+// 			}
  		}
  		
  		// Back
  		nextPoint = this.map.getSymbolAtCoord(coordinateBehind());
  		if (validChild(nextPoint)) {
- 			s = new State(this);
+ 			State s = new State(this);
  			s.turnLeft();
  			s.turnLeft();
  			s.moveForward();
  			s.calculateFutureCost(goal);
  			children.add(s);
+ 			
+// 			System.out.println("\nADDING CHILD STATE - BACK: ");
+// 			s.printState();
+// 			try {
+// 				Thread.sleep(2000);
+// 			} catch (Exception e) {
+// 				
+// 			}
  		}
  		
  		return children;
@@ -329,15 +371,15 @@ public class State implements Comparator<State>{
  			retval = true;
  		}
  		
- 		if (inFront == Enums.Symbol.DOOR && this.key == true) {
+ 		else if (inFront == Enums.Symbol.DOOR && this.key == true) {
  			retval = true;	
  		}
  		
- 		if (inFront == Enums.Symbol.TREE && this.axe == true) {
+ 		else if (inFront == Enums.Symbol.TREE && this.axe == true) {
  			retval = true;	
  		}
  		
- 		if (inFront == Enums.Symbol.AXE || 
+ 		else if (inFront == Enums.Symbol.AXE || 
  				inFront == Enums.Symbol.KEY || 
  				inFront == Enums.Symbol.BOMB ||
  				inFront == Enums.Symbol.GOLD) {
@@ -398,7 +440,7 @@ public class State implements Comparator<State>{
 	}
 	
 	public void calculateFutureCost(Point goal) {
-		int cost = Math.abs((goal.x - this.c.x) + (goal.y - this.c.y));
+		int cost = Math.abs((goal.x - this.c.x) + Math.abs(goal.y - this.c.y));
 		this.futureCost = cost;
 	}
 	
@@ -410,19 +452,20 @@ public class State implements Comparator<State>{
 	public void makeMove(char c) {
 		if (c == 'f') {
 			this.moveForward();
-		} else if (c == 'o' || c == 'c' || c == 'b') {
-			this.map.clearLocation(this.coordinateInFront());	
-			if (c == 'b') {
-				this.bombs--;
-			}
 			
+		} else if (c == 'o' || c == 'c' || c == 'b') {
+
+			// Clear the item in front
+			this.moveForward();
+
 		} else if (c == 'l') {
 			this.turnLeft();
+			
 		} else if (c == 'r') {
 			this.turnRight();
+			
 		}
 	}
-	
  	
 // 	public void giveItemsOnMap() {
 // 		for (Point p : this.map) {

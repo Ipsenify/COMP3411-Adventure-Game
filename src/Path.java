@@ -15,7 +15,10 @@ public class Path {
 		this.openSet = new PriorityQueue<State>(1, new State());
 		this.goal = goal;
 		this.initialState = initialState;
+		initialState.movesMade.clear();
 		this.closedSet = new ArrayList<State>();
+		
+		initialState.calculateFutureCost(goal);
 		openSet.add(initialState);
 		
 		this.firstCall = true;
@@ -26,25 +29,70 @@ public class Path {
 	public ArrayList<Character> movesToPoint() {
 		
 		State current;
-		
+
 		while (this.openSet.size() >= 0) {
 			current = this.openSet.poll();
+			
+//			System.out.println("\nPARENT STATE:");
+//			current.printState();
+//			current.map.printMap(current.c, current.direction);
+//			
+//			try {
+// 				Thread.sleep(4000);
+// 			} catch (Exception e) {
+// 				
+// 			}
+			
 			closedSet.add(current);
+			
 			// Current = Goal
-			if (current.futureCost == 0) {
+			if (current.c.x == goal.x && current.c.y == goal.y) {
+//				System.out.println("\nGOAL FOUND!!!!");
+//				current.printState();
+//				current.map.printMap(current.c, current.direction);
+//				
+//				try {
+//	 				Thread.sleep(4000);
+//	 			} catch (Exception e) {
+//	 				
+//	 			}
+
 				return current.movesMade;
 			}
 			
-			Iterable<State> children = current.getChildren(goal);
+			ArrayList<State> children = current.getChildren(goal);
+			
+//			System.out.println("\n\nChildren list size = "+children.size());
 			
 			for (State child : children) {
+				
+//				child.printState();
+////				child.map.printMap(child.c, child.direction);
+//				
+//				try {
+//	 				Thread.sleep(2000);
+//	 			} catch (Exception e) {
+//	 				
+//	 			}
+
 				if (listContains(closedSet, child) || listContains(openSet, child)) {
 					//Do Nothing
 				} else {
-					this.openSet.add(child);
+//					child.printState();
+//					child.map.printMap(child.c, child.direction);
+//					
+//					try {
+//		 				Thread.sleep(2000);
+//		 			} catch (Exception e) {
+//		 				
+//		 			}
+					this.openSet.offer(child);
 				}
 			}
+			
+			
 		}
+		
 		return null;
 	}
 	
@@ -61,7 +109,7 @@ public class Path {
 	// Given a state of already held items (after exploring)
 	// and a list of items available on the map
 	public ArrayList<Enums.Symbol> itemsToPointRequired(ArrayList<Point> itemsAvailable) {
-		if (firstCall == true) {
+		
 			/*
 			 * A* to the goal point
 			 * For each child generated to reach the goal, record the cost of getting there
@@ -71,13 +119,17 @@ public class Path {
 			 * items (we don't already have) needed for this path
 			 */
 			
+		if (firstCall == true) {
+			
 			// Give the items available to the initial state
 			for (Point p : itemsAvailable) {
 				if (p.symbol == Enums.Symbol.AXE) {
 					this.initialState.axe = true;
+					
 				} else if (p.symbol == Enums.Symbol.BOMB) {
 					bombsAdded++;
 					this.initialState.bombs++;
+					
 				} else if (p.symbol == Enums.Symbol.KEY) {
 					this.initialState.key = true;
 				}
@@ -96,10 +148,13 @@ public class Path {
 		// Determine which items were required for the given list of moves
 		ArrayList<Enums.Symbol> itemsRequired = new ArrayList<Enums.Symbol>();
 		for (Character c : moves) {
+			
 			if (c == 'c' && containsItem(Enums.Symbol.AXE, itemsAvailable)) {
 				itemsRequired.add(Enums.Symbol.AXE);
+				
 			} else if (c == 'o' && containsItem(Enums.Symbol.KEY, itemsAvailable)) {
 				itemsRequired.add(Enums.Symbol.KEY);
+				
 			} else if (c == 'b') {
 				if (bombsAdded != 0) {		// Assumes number of bombs used is less than bombs available
 					itemsRequired.add(Enums.Symbol.BOMB);

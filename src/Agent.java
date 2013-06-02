@@ -50,8 +50,8 @@ public class Agent {
 		
 		System.out.println("\n==> Here is the already explored map:");
         this.globalState.map.updateMap(view, globalState);
-        this.globalState.map.printMap();
-        globalState.printState();
+        this.globalState.map.printMap(this.globalState.c, this.globalState.direction);
+        this.globalState.printState();
         
         
 		
@@ -99,18 +99,34 @@ public class Agent {
 		// 	  Repeat until all goals have been made
 		else if (stage == STAGE_3_PATH) {
 			
+			System.out.println("PATH TO EXECUTE SIZE = "+pathToExecute.size());
+			
 			// TESTING
 			if (pathToExecute.size() > 0) {
 				
 				char moveToMake = pathToExecute.remove(0);
 				
+				System.out.println("moveToMake: " + moveToMake);
+				
 				globalState.makeMove(moveToMake);
+				
+				System.out.print("pathToExecute: ");
+				for (char c : pathToExecute) {
+					System.out.print(c + ", ");
+				}
 				
 				return moveToMake;
 				
 			} else {
 				Path pathFinder = new Path(new State(globalState), globalState.map.findItem(Enums.Symbol.KEY).get(0));
-				System.out.println("\n\n\n ABOUT TO PATH TO KEY: \n");
+//				Path pathFinder = new Path(new State(globalState), new Point(80, 80, Enums.Symbol.EMPTY));
+				
+				System.out.println("\n\n\n ABOUT TO PATH TO CENTRE: \n");
+				try {
+					Thread.sleep(1000);
+				} catch (Exception e) {
+					
+				}
 				ArrayList<Character> moves = pathFinder.movesToPoint();
 				
 				pathToExecute.addAll(moves);
