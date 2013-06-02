@@ -5,6 +5,24 @@
 /*  UNSW Session 1, 2013
 */
 
+/*
+ * Question:
+ * Briefly describe how your program works, including any algorithms and data structures employed, 
+ * and explain any design decisions you made along the way.
+ * 
+ * The way our Agent works is as follows:
+ * Phase 1: Explore
+ * Our Agent uses the Pledge algorithm to explore as much as it can of the map, storing all the information 
+ * it learns in a globalState. We chose to use the Pledge algorithm because it is a smarter wall following
+ * algorithm that caters for 'islands' and prevents our agent getting stuck. It does this by storing the 
+ * initial state 
+ * 
+ * 
+ * 
+ * 
+ */
+
+
 import java.util.*;
 import java.io.*;
 import java.net.*;
@@ -138,7 +156,9 @@ public class Agent {
 			for (Point p : goalList) {
 				System.out.println("goal "+count+" = " + p.symbol);
 				count++;
-			}*/
+			}
+			
+			stage++;*/
 		}
 		
 		// 3. Take the first goal and path to it
