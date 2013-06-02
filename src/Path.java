@@ -11,6 +11,8 @@ public class Path {
 	private boolean firstCall;
 	private int bombsAdded;
 	
+	public int pastCostLimit;
+	
 	public Path(State initialState, Point goal) {
 		this.openSet = new PriorityQueue<State>();
 		this.goal = goal;
@@ -23,6 +25,7 @@ public class Path {
 		
 		this.firstCall = true;
 		this.bombsAdded = 0;
+		pastCostLimit = Integer.MAX_VALUE;
 	}
 	
 	// Return the list of actions required to reach the goal
@@ -30,9 +33,15 @@ public class Path {
 		
 		State current;
 
-		while (this.openSet.size() >= 0) {
+		while (this.openSet.size() > 0) {
+			
 			current = this.openSet.poll();
 			
+			// Used when limited moves A* is allowed
+			// Currently for picking up nearby items
+			if (current.pastCost > this.pastCostLimit) {
+				return null;
+			}
 //			System.out.println("\nPARENT STATE:");
 //			current.printState();
 //			current.map.printMap(current.c, current.direction);

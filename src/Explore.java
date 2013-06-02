@@ -17,8 +17,8 @@ public class Explore {
 	
 	private Enums.Direction initialDirection;
 	
-	private boolean addContactPoints;
-	private ArrayList<ContactPoints> contactPoints;
+	public boolean addContactPoints;
+	public ArrayList<ContactPoints> contactPoints;
 	
 	private ArrayList<Coordinate> coordinatesSeen;
 	

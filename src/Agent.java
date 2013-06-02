@@ -16,6 +16,9 @@ public class Agent {
 	public static final int STAGE_2_SETGOAL = 1;	
 	public static final int STAGE_3_PATH 	= 2;
 	public static final int STAGE_4_RETURN 	= 3;
+	
+
+	public static final int ITEM_MOVE_LIMIT = 10;
 
 	// Class instance variables
 	State globalState;
@@ -26,12 +29,17 @@ public class Agent {
 	
 	int stage;
 	
+	ArrayList<Point> itemsUnreachable;
 	
 	ArrayList<Point> nearbyItems;
 	Point currentGoal;
 	boolean gettingNeabyItem;
+	boolean continueExploring;
 
 	public Agent() {
+		
+		itemsUnreachable = new ArrayList<Point>();
+		continueExploring = false;
 	
 		// Initialize class instances of Map and State variables
 		globalState = new State();
@@ -48,7 +56,7 @@ public class Agent {
 		
 		// Wait for testing purposes
 		try {
-			Thread.sleep(50);
+			Thread.sleep(25);
 		} catch (Exception e) {
 			
 		}
@@ -66,15 +74,25 @@ public class Agent {
 			// If there is a pickup nearby DO IT!
 			nearbyItems = this.globalState.map.findNearItems(this.globalState.c);
 			
-			if (nearbyItems.size() > 0) {
+			// TODO
+			if (nearbyItems.size() > 0 && listContains(itemsUnreachable, nearbyItems.get(0)) == false) {
 				Db.p("FOUND A NEARBY ITEM, GOING THERE NOW!!!!", 1000);
 				
 				currentGoal = nearbyItems.remove(0);
-				gettingNeabyItem = true;
-				stage = STAGE_3_PATH;
-				explorer.followingWall = false;
+				// If the item is unreachable continue exploring
+				if (listContains(itemsUnreachable, currentGoal) == false) {
+						gettingNeabyItem = true;
+						stage = STAGE_3_PATH;
+						explorer.followingWall = false;
+				} else {
+					char moveToMake = explorer.run();
+					return moveToMake;
+				}
 				
 			} else {
+				if (continueExploring == true) {
+					continueExploring = false;
+				}
 				Db.p("EXPLORING", 0);
 				char moveToMake = explorer.run();
 				
@@ -146,6 +164,8 @@ public class Agent {
 				if (pathToExecute.size() == 0 && gettingNeabyItem == true) {
 					stage = STAGE_1_EXPLORE;
 					gettingNeabyItem = false;
+					this.explorer.contactPoints.clear();
+					this.explorer.addContactPoints = true;
 				} else if (pathToExecute.size() == 0){
 					stage = STAGE_2_SETGOAL;
 				}
@@ -156,7 +176,14 @@ public class Agent {
 				//Path pathFinder = new Path(new State(globalState), globalState.map.findItem(Enums.Symbol.GOLD).get(0));
 //				Path pathFinder = new Path(new State(globalState), new Point(80, 80, Enums.Symbol.EMPTY));
 				
-				Path pathFinder = new Path(new State(globalState), currentGoal);
+				// Reset the past cost before performing A*
+				State copy = new State(globalState);
+				copy.pastCost = 0;
+				Path pathFinder = new Path(copy, currentGoal);
+				
+				if (gettingNeabyItem == true) {
+					pathFinder.pastCostLimit = ITEM_MOVE_LIMIT;
+				}
 				
 				System.out.println("\n\n\n ABOUT TO PATH TO SOMEWHERE: \n");
 				try {
@@ -166,7 +193,17 @@ public class Agent {
 				}
 				ArrayList<Character> moves = pathFinder.movesToPoint();
 				
-				pathToExecute.addAll(moves);
+				if (moves != null) {
+					pathToExecute.addAll(moves);
+				} else if (moves == null && gettingNeabyItem == true) {
+					Db.p("Coudnt reach item", 1000);
+					itemsUnreachable.add(currentGoal);
+					stage = STAGE_1_EXPLORE;
+					gettingNeabyItem = false;
+					continueExploring = true;
+					this.explorer.contactPoints.clear();
+					this.explorer.addContactPoints = true;
+				}
 				
 //				System.out.println("\n\n\n MOVES TO KEY: \n");
 //				for (Character c : moves) {
@@ -202,6 +239,15 @@ public class Agent {
             System.out.println("|");
         }
         System.out.println("+ - - - - - +");
+   }
+   
+   private boolean listContains(ArrayList<Point> list, Point p) {
+	   for (Point z : list) {
+		   if (p.x == z.x && p.y == z.y) {
+			   return true;
+		   }
+	   }
+	   return false;
    }
 
    public static void main( String[] args )
