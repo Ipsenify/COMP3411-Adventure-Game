@@ -25,6 +25,8 @@ public class Agent {
 	ArrayList<Character> pathToExecute;
 	
 	int stage;
+	
+	Point currentGoal;
 
 	public Agent() {
 	
@@ -43,7 +45,7 @@ public class Agent {
 		
 		// Wait for testing purposes
 		try {
-			Thread.sleep(100);
+			Thread.sleep(50);
 		} catch (Exception e) {
 			
 		}
@@ -64,7 +66,7 @@ public class Agent {
 	        if (globalState.gold == true) {
 	        	stage = STAGE_4_RETURN;
 	        } else if (explorer.stillExploring() == false) {
-	        	stage += 2;	//TODO
+	        	stage += 1;	//TODO
 	        }
 			
 			return moveToMake;
@@ -73,13 +75,22 @@ public class Agent {
 		// 2. Set the intermediary goals we need to obtain the gold
 		else if (stage == STAGE_2_SETGOAL) {
 			
+			if(globalState.gold == false) {
+				currentGoal = this.globalState.map.findItem(Enums.Symbol.GOLD).get(0);
+				
+			} else {
+				currentGoal = new Point(80, 80, Enums.Symbol.EMPTY);
+			}
+			
+			stage++;
+			
 			//State pathState = new State(globalState);
 			//pathState.giveItemsOnMap();
 			//pathState.printState();
 			
 			//goalGenerator = new GoalGenerator(pathState);
 			
-			goalGenerator = new GoalGenerator(new State(globalState));
+			/*goalGenerator = new GoalGenerator(new State(globalState));
 			
 			// Generate an ArrayList of Points that are required to be reach
 			// in order to get the gold
@@ -92,7 +103,7 @@ public class Agent {
 			for (Point p : goalList) {
 				System.out.println("goal "+count+" = " + p.symbol);
 				count++;
-			}
+			}*/
 		}
 		
 		// 3. Take the first goal and path to it
@@ -115,13 +126,19 @@ public class Agent {
 					System.out.print(c + ", ");
 				}
 				
+				if (pathToExecute.size() == 0) {
+					stage--;
+				}
+				
 				return moveToMake;
 				
 			} else {
-				Path pathFinder = new Path(new State(globalState), globalState.map.findItem(Enums.Symbol.KEY).get(0));
+				//Path pathFinder = new Path(new State(globalState), globalState.map.findItem(Enums.Symbol.GOLD).get(0));
 //				Path pathFinder = new Path(new State(globalState), new Point(80, 80, Enums.Symbol.EMPTY));
 				
-				System.out.println("\n\n\n ABOUT TO PATH TO CENTRE: \n");
+				Path pathFinder = new Path(new State(globalState), currentGoal);
+				
+				System.out.println("\n\n\n ABOUT TO PATH TO SOMEWHERE: \n");
 				try {
 					Thread.sleep(1000);
 				} catch (Exception e) {
@@ -140,7 +157,8 @@ public class Agent {
 		
 		// 4. Return the gold to [0,0]
 		else if (stage == STAGE_4_RETURN) {
-			
+			currentGoal = new Point(80, 80, Enums.Symbol.EMPTY);
+			stage--;
 		}
 
         return 0;

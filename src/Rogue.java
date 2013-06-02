@@ -102,7 +102,7 @@ public class Rogue {
             else {
               ch = map[r][c];
             }
-            System.out.print( ch + " ");
+            System.out.print( ch );
          }
          System.out.println();
       }

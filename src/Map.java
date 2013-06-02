@@ -42,8 +42,9 @@ public class Map implements Iterable<Point>{
     	 
     	 for (int i=0; i < MAP_WIDTH; i++) {
              for (int j=0; j < MAP_HEIGHT; j++) {
-             
-             	this.map[i][j] = m.map[i][j];
+            	Point p = new Point(m.map[i][j].x, m.map[i][j].y, m.map[i][j].symbol);
+            	 
+             	this.map[i][j] = p;
              }
          }
     }
@@ -168,9 +169,9 @@ public class Map implements Iterable<Point>{
         for (int y=65; y < 100; y++) {
             for (int x=45; x < 105; x++) {
             	if (x == c.x && y == c.y) {
-            		System.out.print(Enums.agentDirection(d) + " ");
+            		System.out.print(Enums.agentDirection(d));
             	} else {
-            		System.out.print(map[x][y].symbol + " ");
+            		System.out.print(map[x][y].symbol);
             	}
             }
             System.out.println();

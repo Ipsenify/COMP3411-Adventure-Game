@@ -9,7 +9,7 @@ import java.util.*;
 import java.io.*;
 import java.net.*;
 
-public class State implements Comparator<State>{
+public class State implements Comparable<State>{
 
     // Class variables
     public int bombs;
@@ -421,12 +421,17 @@ public class State implements Comparator<State>{
  		return this.movesMade.get(this.movesMade.size()-1);
  	}
 
-	@Override
+	/*@Override
 	public int compare(State s1, State s2) {
 		int cost1 = s1.pastCost + s1.futureCost;
 		int cost2 = s2.pastCost + s2.futureCost;
 		return cost1 - cost2;
-	}
+	}*/
+ 	
+ 	@Override
+ 	public int compareTo(State s) {
+ 		return this.getCost() - s.getCost();
+ 	}
 	
 	public boolean isEqual(State compareTo) {
 		boolean retval = true;
@@ -440,7 +445,7 @@ public class State implements Comparator<State>{
 	}
 	
 	public void calculateFutureCost(Point goal) {
-		int cost = Math.abs((goal.x - this.c.x) + Math.abs(goal.y - this.c.y));
+		int cost = Math.abs(goal.x - this.c.x) + Math.abs(goal.y - this.c.y);
 		this.futureCost = cost;
 	}
 	

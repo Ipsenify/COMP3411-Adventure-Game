@@ -12,7 +12,7 @@ public class Path {
 	private int bombsAdded;
 	
 	public Path(State initialState, Point goal) {
-		this.openSet = new PriorityQueue<State>(1, new State());
+		this.openSet = new PriorityQueue<State>();
 		this.goal = goal;
 		this.initialState = initialState;
 		initialState.movesMade.clear();
