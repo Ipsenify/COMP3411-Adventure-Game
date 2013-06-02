@@ -9,7 +9,7 @@ public class Explore {
 	
 	private int phase;
 	
-	private boolean followingWall;
+	public boolean followingWall;
 	private boolean requiredAxe;
 	private boolean requiredKey;
 	

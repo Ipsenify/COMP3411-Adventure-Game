@@ -12,6 +12,12 @@ public class Point {
 		this.symbol = symbol;
 	}
 	
+	public Point (Point p) {
+		this.x = p.x;
+		this.y = p.y;
+		this.symbol = p.symbol;
+	}
+	
 	// Convert the Point into a Coordinate type
 	public Coordinate convertToCoord() {
 		Coordinate coord = new Coordinate(this.x, this.y);

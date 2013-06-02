@@ -26,7 +26,10 @@ public class Agent {
 	
 	int stage;
 	
+	
+	ArrayList<Point> nearbyItems;
 	Point currentGoal;
+	boolean gettingNeabyItem;
 
 	public Agent() {
 	
@@ -35,7 +38,7 @@ public class Agent {
 		explorer = new Explore(globalState);
 		
 		pathToExecute = new ArrayList<Character>();
-		
+		gettingNeabyItem = false;
 		// First stage of AI will be exploring the surrounding environment 
 		stage = STAGE_1_EXPLORE;
 	}
@@ -60,16 +63,30 @@ public class Agent {
 		// 1. Explorer everywhere we can FIRST!
 		if (stage == STAGE_1_EXPLORE) {
 			
-			char moveToMake = explorer.run();
+			// If there is a pickup nearby DO IT!
+			nearbyItems = this.globalState.map.findNearItems(this.globalState.c);
 			
-			// If we have the gold, go straight to STAGE_4_RETURN
-	        if (globalState.gold == true) {
-	        	stage = STAGE_4_RETURN;
-	        } else if (explorer.stillExploring() == false) {
-	        	stage += 1;	//TODO
-	        }
+			if (nearbyItems.size() > 0) {
+				Db.p("FOUND A NEARBY ITEM, GOING THERE NOW!!!!", 1000);
+				
+				currentGoal = nearbyItems.remove(0);
+				gettingNeabyItem = true;
+				stage = STAGE_3_PATH;
+				explorer.followingWall = false;
+				
+			} else {
+				Db.p("EXPLORING", 0);
+				char moveToMake = explorer.run();
+				
+				// If we have the gold, go straight to STAGE_4_RETURN
+		        if (globalState.gold == true) {
+		        	stage = STAGE_4_RETURN;
+		        } else if (explorer.stillExploring() == false) {
+		        	stage = STAGE_2_SETGOAL;
+		        }
+		        return moveToMake;
+			}
 			
-			return moveToMake;
 		} 
 		
 		// 2. Set the intermediary goals we need to obtain the gold
@@ -126,8 +143,11 @@ public class Agent {
 					System.out.print(c + ", ");
 				}
 				
-				if (pathToExecute.size() == 0) {
-					stage--;
+				if (pathToExecute.size() == 0 && gettingNeabyItem == true) {
+					stage = STAGE_1_EXPLORE;
+					gettingNeabyItem = false;
+				} else if (pathToExecute.size() == 0){
+					stage = STAGE_2_SETGOAL;
 				}
 				
 				return moveToMake;
@@ -242,4 +262,6 @@ public class Agent {
          catch( IOException e ) {}
       }
    }
+   
+   
 }

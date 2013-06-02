@@ -285,5 +285,22 @@ public class Map implements Iterable<Point>{
 		}
 		return ret.iterator();
 	}
+	
+	public ArrayList<Point> findNearItems (Coordinate c) {
+		ArrayList<Point> list = new ArrayList<Point>();
+		
+		for (int y=c.y-2; y <= c.y+2; y++) {
+            for (int x=c.x-2; x <= c.x+2; x++) {
+            	if (this.map[x][y].symbol == Enums.Symbol.GOLD ||
+            			this.map[x][y].symbol == Enums.Symbol.KEY ||
+            			this.map[x][y].symbol == Enums.Symbol.AXE ||
+            			this.map[x][y].symbol == Enums.Symbol.BOMB) {
+            		list.add(new Point(this.map[x][y]));
+            	}
+            }
+        }
+		
+		return list;
+	}
     
 }

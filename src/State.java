@@ -362,7 +362,6 @@ public class State implements Comparable<State>{
  		return retval;
  	} 
  	
- 	// Assuming no BOMBS
  	// Used for exploration, will not use consumables (bombs)
  	public boolean validMove(Enums.Symbol inFront) {
  		boolean retval = false;
